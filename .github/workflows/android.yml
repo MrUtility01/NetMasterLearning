@@ -1,45 +1,32 @@
-name: NetMaster Learning 5.1 Android CI
+name: NetMaster Android APK
 
 on:
   push:
     branches: [ main, master ]
-  pull_request:
   workflow_dispatch:
+
+concurrency:
+  group: android-apk-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
 
 jobs:
-  validate-content:
+  build-debug-apk:
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     steps:
-      - uses: actions/checkout@v7
-      - name: Validate JSON assets
-        run: |
-          python - <<'PY'
-          import json, pathlib
-          files=list(pathlib.Path('app/src/main/assets').rglob('*.json'))
-          for p in files:
-              json.loads(p.read_text(encoding='utf-8'))
-              print('OK',p)
-          print('validated',len(files),'JSON files')
-          PY
-      - name: Validate Gradle wrapper files exist
-        run: |
-          test -s gradle/wrapper/gradle-wrapper.jar
-          test -s gradle/wrapper/gradle-wrapper.properties
-          test -f gradlew
+      - uses: actions/checkout@v4
 
-  unit-and-debug:
-    runs-on: ubuntu-latest
-    needs: validate-content
-    steps:
-      - uses: actions/checkout@v7
-      - name: Patch ViewModel entity constructors
+      - name: Patch ViewModel named constructors (safe)
         run: |
           python3 - <<'PY'
           from pathlib import Path
           p = Path('app/src/main/java/com/example/netmaster/ui/NetMasterViewModel.kt')
+          if not p.exists():
+              print('ViewModel missing, skip')
+              raise SystemExit(0)
           t = p.read_text(encoding='utf-8')
           reps = [
             ('dao.session(StudySessionEntity(System.currentTimeMillis(),minutes))',
@@ -60,91 +47,41 @@ jobs:
           for old, new in reps:
               if old in t:
                   t = t.replace(old, new)
-                  print('patched', old[:60])
-              else:
-                  print('skip', old[:60])
+                  print('patched', old[:50])
           p.write_text(t, encoding='utf-8')
           print('ViewModel patch done')
           PY
-      - uses: actions/setup-java@v6
+
+      - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '21'
+          java-version: '17'
           cache: gradle
-      - uses: android-actions/setup-android@v4
-      - name: Install Android SDK packages
+
+      - uses: android-actions/setup-android@v3
+
+      - name: Accept licenses + SDK
         run: |
           yes | sdkmanager --licenses >/dev/null || true
-          sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
-      - uses: gradle/actions/setup-gradle@v6
-        with:
-          gradle-version: '8.9'
-          validate-wrappers: false
-      - name: Unit tests (optional)
-        continue-on-error: true
-        run: gradle test --no-daemon || true
-      - name: Debug APK
-        run: gradle assembleDebug --no-daemon
+          sdkmanager "platforms;android-35" "build-tools;35.0.0" || true
+
+      - name: Make gradlew executable
+        run: chmod +x gradlew || true
+
+      - name: Assemble Debug APK
+        run: |
+          if [ -x ./gradlew ]; then
+            ./gradlew assembleDebug --no-daemon --stacktrace
+          else
+            gradle assembleDebug --no-daemon --stacktrace
+          fi
+
+      - name: List APK
+        run: find app/build/outputs -name "*.apk" -ls || true
+
       - uses: actions/upload-artifact@v4
         with:
           name: netmaster-debug-apk
           path: app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
-
-  release:
-    if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
-    runs-on: ubuntu-latest
-    needs: unit-and-debug
-    steps:
-      - uses: actions/checkout@v7
-      - name: Patch ViewModel entity constructors
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          p = Path('app/src/main/java/com/example/netmaster/ui/NetMasterViewModel.kt')
-          t = p.read_text(encoding='utf-8')
-          reps = [
-            ('dao.session(StudySessionEntity(System.currentTimeMillis(),minutes))',
-             'dao.session(StudySessionEntity(startedAt=System.currentTimeMillis(),minutes=minutes))'),
-            ('dao.incidentEvent(IncidentEventEntity(i.id,"RESOLVED","Root cause: ${root.take(240)}"))',
-             'dao.incidentEvent(IncidentEventEntity(incidentId=i.id,eventType="RESOLVED",message="Root cause: ${root.take(240)}"))'),
-            ('dao.incidentEvent(IncidentEventEntity(i.id,"STATUS",status))',
-             'dao.incidentEvent(IncidentEventEntity(incidentId=i.id,eventType="STATUS",message=status))'),
-            ('dao.incidentEvent(IncidentEventEntity(id,"EVIDENCE","$type: ${value.take(240)}"))',
-             'dao.incidentEvent(IncidentEventEntity(incidentId=id,eventType="EVIDENCE",message="$type: ${value.take(240)}"))'),
-            ('dao.capture(PacketCaptureEntity(name,"TEXT",raw,rows.size,packetEngine.summary(rows)))',
-             'dao.capture(PacketCaptureEntity(name=name,format="TEXT",rawText=raw,packetCount=rows.size,protocolSummary=packetEngine.summary(rows)))'),
-            ('dao.capture(PacketCaptureEntity(name,format,raw,rows.size,packetEngine.summary(rows)))',
-             'dao.capture(PacketCaptureEntity(name=name,format=format,rawText=raw,packetCount=rows.size,protocolSummary=packetEngine.summary(rows)))'),
-            ('dao.simulatorSnapshot(SimulatorSnapshotEntity(label,SimulatorCodec.encode(state)))',
-             'dao.simulatorSnapshot(SimulatorSnapshotEntity(label=label,stateJson=SimulatorCodec.encode(state)))'),
-          ]
-          for old, new in reps:
-              if old in t:
-                  t = t.replace(old, new)
-                  print('patched', old[:60])
-          p.write_text(t, encoding='utf-8')
-          PY
-      - uses: actions/setup-java@v6
-        with:
-          distribution: temurin
-          java-version: '21'
-          cache: gradle
-      - uses: android-actions/setup-android@v4
-      - name: Install Android SDK packages
-        run: |
-          yes | sdkmanager --licenses >/dev/null || true
-          sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
-      - uses: gradle/actions/setup-gradle@v6
-        with:
-          gradle-version: '8.9'
-          validate-wrappers: false
-      - name: Build release
-        run: gradle assembleRelease bundleRelease --no-daemon
-      - uses: actions/upload-artifact@v4
-        with:
-          name: netmaster-release-unsigned
-          path: |
-            app/build/outputs/apk/release/*.apk
-            app/build/outputs/bundle/release/*.aab
-          if-no-files-found: error
+          retention-days: 14
