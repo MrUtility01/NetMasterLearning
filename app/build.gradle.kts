@@ -2,12 +2,28 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.serialization")
+    id("org.jetbrains.kotlin.plugin.compose")
     id("com.google.devtools.ksp")
 }
 
-android { namespace = "com.example.netmaster"; compileSdk = 35
-    defaultConfig { applicationId = "com.example.netmaster"; minSdk = 26; targetSdk = 35; versionCode = 611; versionName = "11.0.0" }
-    buildFeatures { compose = true; buildConfig = true }
+android {
+    namespace = "com.example.netmaster"
+    compileSdk = 35
+    defaultConfig {
+        applicationId = "com.example.netmaster"
+        minSdk = 26
+        targetSdk = 35
+        versionCode = 611
+        versionName = "11.0.0"
+        buildConfigField("String", "PRODUCT_NAME", "\"NetMaster Learning\"")
+        buildConfigField("String", "PRODUCT_VERSION", "\"11.0.0\"")
+        buildConfigField("String", "CREATOR_NAME", "\"مهندس مسعود جوکار\"")
+        buildConfigField("String", "CREATOR_PHONE", "\"09132184122\"")
+    }
+    buildFeatures {
+        compose = true
+        buildConfig = true
+    }
 
     buildTypes {
         getByName("debug") {
@@ -23,17 +39,14 @@ android { namespace = "com.example.netmaster"; compileSdk = 35
             )
         }
     }
-
-    defaultConfig {
-        buildConfigField("String", "PRODUCT_NAME", "\"NetMaster Learning\"")
-        buildConfigField("String", "PRODUCT_VERSION", "\"11.0.0\"")
-        buildConfigField("String", "CREATOR_NAME", "\"مهندس مسعود جوکار\"")
-        buildConfigField("String", "CREATOR_PHONE", "\"09132184122\"")
+    packaging {
+        resources.excludes += "/META-INF/{AL2.0,LGPL2.1}"
     }
-    packaging { resources.excludes += "/META-INF/{AL2.0,LGPL2.1}" }
 }
 
-kotlin { jvmToolchain(17) }
+kotlin {
+    jvmToolchain(17)
+}
 
 dependencies {
     val composeBom = platform("androidx.compose:compose-bom:2025.01.00")
