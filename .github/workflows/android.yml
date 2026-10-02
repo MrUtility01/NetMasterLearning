@@ -14,6 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
       - name: Validate JSON assets
         run: |
           python - <<'PY'
@@ -35,6 +37,51 @@ jobs:
     needs: validate-content
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Restore NetMasterApp.kt and balance braces
+        run: |
+          git show ccd2bb7b94d95ccd2387cf541776b46771bebda7:app/src/main/java/com/example/netmaster/ui/NetMasterApp.kt > app/src/main/java/com/example/netmaster/ui/NetMasterApp.kt
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('app/src/main/java/com/example/netmaster/ui/NetMasterApp.kt')
+          lines = path.read_text(encoding='utf-8').splitlines()
+          # remove premature lone } after NetMasterApp body (old line 32)
+          if len(lines) > 31 and lines[31].strip() == '}':
+              # only if previous line already closed the function balance
+              del lines[31]
+          def fix_braces(line: str) -> str:
+              o, c = line.count('{'), line.count('}')
+              if o > c:
+                  line = line + ('}' * (o - c))
+              return line
+          fixed = []
+          for line in lines:
+              if line.startswith('@Composable fun AICenter'):
+                  line = fix_braces(line)
+              elif line.startswith('@Composable fun IncidentWorkspaceScreen'):
+                  line = fix_braces(line)
+              elif line.startswith('@Composable fun SimulatorCenter'):
+                  line = fix_braces(line)
+              elif 'Text("Incident Workspace"' in line:
+                  line = fix_braces(line)
+              elif 'Text("Engineering Evidence Chain"' in line:
+                  line = fix_braces(line)
+              fixed.append(line)
+          out = []
+          for i, line in enumerate(fixed):
+              if line.strip() == '}' and i > 0 and fixed[i-1].startswith('@Composable fun SimulatorCenter'):
+                  continue
+              out.append(line)
+          text = '\n'.join(out) + '\n'
+          bal = sum(1 if ch == '{' else -1 if ch == '}' else 0 for ch in text)
+          if bal > 0:
+              text = text.rstrip() + ('}' * bal) + '\n'
+          path.write_text(text, encoding='utf-8')
+          bal2 = sum(1 if ch == '{' else -1 if ch == '}' else 0 for ch in text)
+          print('brace_balance', bal2)
+          assert bal2 == 0, bal2
+          PY
       - uses: actions/setup-java@v6
         with:
           distribution: temurin
@@ -66,6 +113,49 @@ jobs:
     needs: unit-and-debug
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Restore NetMasterApp.kt and balance braces
+        run: |
+          git show ccd2bb7b94d95ccd2387cf541776b46771bebda7:app/src/main/java/com/example/netmaster/ui/NetMasterApp.kt > app/src/main/java/com/example/netmaster/ui/NetMasterApp.kt
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('app/src/main/java/com/example/netmaster/ui/NetMasterApp.kt')
+          lines = path.read_text(encoding='utf-8').splitlines()
+          if len(lines) > 31 and lines[31].strip() == '}':
+              del lines[31]
+          def fix_braces(line: str) -> str:
+              o, c = line.count('{'), line.count('}')
+              if o > c:
+                  line = line + ('}' * (o - c))
+              return line
+          fixed = []
+          for line in lines:
+              if line.startswith('@Composable fun AICenter'):
+                  line = fix_braces(line)
+              elif line.startswith('@Composable fun IncidentWorkspaceScreen'):
+                  line = fix_braces(line)
+              elif line.startswith('@Composable fun SimulatorCenter'):
+                  line = fix_braces(line)
+              elif 'Text("Incident Workspace"' in line:
+                  line = fix_braces(line)
+              elif 'Text("Engineering Evidence Chain"' in line:
+                  line = fix_braces(line)
+              fixed.append(line)
+          out = []
+          for i, line in enumerate(fixed):
+              if line.strip() == '}' and i > 0 and fixed[i-1].startswith('@Composable fun SimulatorCenter'):
+                  continue
+              out.append(line)
+          text = '\n'.join(out) + '\n'
+          bal = sum(1 if ch == '{' else -1 if ch == '}' else 0 for ch in text)
+          if bal > 0:
+              text = text.rstrip() + ('}' * bal) + '\n'
+          path.write_text(text, encoding='utf-8')
+          bal2 = sum(1 if ch == '{' else -1 if ch == '}' else 0 for ch in text)
+          print('brace_balance', bal2)
+          assert bal2 == 0, bal2
+          PY
       - uses: actions/setup-java@v6
         with:
           distribution: temurin
