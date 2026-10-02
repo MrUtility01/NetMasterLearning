@@ -19,6 +19,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Restore NetMasterApp.kt (known-good RTL UI)
+        run: |
+          curl -fsSL "https://raw.githubusercontent.com/MrUtility01/NetMasterLearning/b17881a63299efc956ee79920f285b5fb93cc053/app/src/main/java/com/example/netmaster/ui/NetMasterApp.kt" \
+            -o app/src/main/java/com/example/netmaster/ui/NetMasterApp.kt
+          wc -l app/src/main/java/com/example/netmaster/ui/NetMasterApp.kt
+          grep -q "fun TopologyGraph" app/src/main/java/com/example/netmaster/ui/NetMasterApp.kt
+          grep -q "fun ProtocolFlowChart" app/src/main/java/com/example/netmaster/ui/NetMasterApp.kt
+          grep -q "fun NetMasterApp" app/src/main/java/com/example/netmaster/ui/NetMasterApp.kt
+          echo "NetMasterApp restored OK"
+
       - name: Patch ViewModel named constructors (safe)
         run: |
           python3 - <<'PY'
