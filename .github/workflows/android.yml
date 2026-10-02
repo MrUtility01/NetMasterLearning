@@ -35,9 +35,37 @@ jobs:
     needs: validate-content
     steps:
       - uses: actions/checkout@v7
-      - name: Fix ViewModel StudySessionEntity args
+      - name: Patch ViewModel entity constructors
         run: |
-          sed -i 's/StudySessionEntity(System.currentTimeMillis(),minutes)/StudySessionEntity(startedAt=System.currentTimeMillis(),minutes=minutes)/g' app/src/main/java/com/example/netmaster/ui/NetMasterViewModel.kt || true
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('app/src/main/java/com/example/netmaster/ui/NetMasterViewModel.kt')
+          t = p.read_text(encoding='utf-8')
+          reps = [
+            ('dao.session(StudySessionEntity(System.currentTimeMillis(),minutes))',
+             'dao.session(StudySessionEntity(startedAt=System.currentTimeMillis(),minutes=minutes))'),
+            ('dao.incidentEvent(IncidentEventEntity(i.id,"RESOLVED","Root cause: ${root.take(240)}"))',
+             'dao.incidentEvent(IncidentEventEntity(incidentId=i.id,eventType="RESOLVED",message="Root cause: ${root.take(240)}"))'),
+            ('dao.incidentEvent(IncidentEventEntity(i.id,"STATUS",status))',
+             'dao.incidentEvent(IncidentEventEntity(incidentId=i.id,eventType="STATUS",message=status))'),
+            ('dao.incidentEvent(IncidentEventEntity(id,"EVIDENCE","$type: ${value.take(240)}"))',
+             'dao.incidentEvent(IncidentEventEntity(incidentId=id,eventType="EVIDENCE",message="$type: ${value.take(240)}"))'),
+            ('dao.capture(PacketCaptureEntity(name,"TEXT",raw,rows.size,packetEngine.summary(rows)))',
+             'dao.capture(PacketCaptureEntity(name=name,format="TEXT",rawText=raw,packetCount=rows.size,protocolSummary=packetEngine.summary(rows)))'),
+            ('dao.capture(PacketCaptureEntity(name,format,raw,rows.size,packetEngine.summary(rows)))',
+             'dao.capture(PacketCaptureEntity(name=name,format=format,rawText=raw,packetCount=rows.size,protocolSummary=packetEngine.summary(rows)))'),
+            ('dao.simulatorSnapshot(SimulatorSnapshotEntity(label,SimulatorCodec.encode(state)))',
+             'dao.simulatorSnapshot(SimulatorSnapshotEntity(label=label,stateJson=SimulatorCodec.encode(state)))'),
+          ]
+          for old, new in reps:
+              if old in t:
+                  t = t.replace(old, new)
+                  print('patched', old[:60])
+              else:
+                  print('skip', old[:60])
+          p.write_text(t, encoding='utf-8')
+          print('ViewModel patch done')
+          PY
       - uses: actions/setup-java@v6
         with:
           distribution: temurin
@@ -69,9 +97,34 @@ jobs:
     needs: unit-and-debug
     steps:
       - uses: actions/checkout@v7
-      - name: Fix ViewModel StudySessionEntity args
+      - name: Patch ViewModel entity constructors
         run: |
-          sed -i 's/StudySessionEntity(System.currentTimeMillis(),minutes)/StudySessionEntity(startedAt=System.currentTimeMillis(),minutes=minutes)/g' app/src/main/java/com/example/netmaster/ui/NetMasterViewModel.kt || true
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('app/src/main/java/com/example/netmaster/ui/NetMasterViewModel.kt')
+          t = p.read_text(encoding='utf-8')
+          reps = [
+            ('dao.session(StudySessionEntity(System.currentTimeMillis(),minutes))',
+             'dao.session(StudySessionEntity(startedAt=System.currentTimeMillis(),minutes=minutes))'),
+            ('dao.incidentEvent(IncidentEventEntity(i.id,"RESOLVED","Root cause: ${root.take(240)}"))',
+             'dao.incidentEvent(IncidentEventEntity(incidentId=i.id,eventType="RESOLVED",message="Root cause: ${root.take(240)}"))'),
+            ('dao.incidentEvent(IncidentEventEntity(i.id,"STATUS",status))',
+             'dao.incidentEvent(IncidentEventEntity(incidentId=i.id,eventType="STATUS",message=status))'),
+            ('dao.incidentEvent(IncidentEventEntity(id,"EVIDENCE","$type: ${value.take(240)}"))',
+             'dao.incidentEvent(IncidentEventEntity(incidentId=id,eventType="EVIDENCE",message="$type: ${value.take(240)}"))'),
+            ('dao.capture(PacketCaptureEntity(name,"TEXT",raw,rows.size,packetEngine.summary(rows)))',
+             'dao.capture(PacketCaptureEntity(name=name,format="TEXT",rawText=raw,packetCount=rows.size,protocolSummary=packetEngine.summary(rows)))'),
+            ('dao.capture(PacketCaptureEntity(name,format,raw,rows.size,packetEngine.summary(rows)))',
+             'dao.capture(PacketCaptureEntity(name=name,format=format,rawText=raw,packetCount=rows.size,protocolSummary=packetEngine.summary(rows)))'),
+            ('dao.simulatorSnapshot(SimulatorSnapshotEntity(label,SimulatorCodec.encode(state)))',
+             'dao.simulatorSnapshot(SimulatorSnapshotEntity(label=label,stateJson=SimulatorCodec.encode(state)))'),
+          ]
+          for old, new in reps:
+              if old in t:
+                  t = t.replace(old, new)
+                  print('patched', old[:60])
+          p.write_text(t, encoding='utf-8')
+          PY
       - uses: actions/setup-java@v6
         with:
           distribution: temurin
