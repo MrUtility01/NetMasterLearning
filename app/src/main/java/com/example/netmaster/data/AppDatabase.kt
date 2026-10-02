@@ -2,6 +2,8 @@ package com.example.netmaster.data
 
 import android.content.Context
 import androidx.room.*
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 
 @Entity(tableName="progress",primaryKeys=["lessonId"])
 data class ProgressEntity(val lessonId:String,val mastery:String="UNKNOWN",val completed:Boolean=false,val updatedAt:Long=System.currentTimeMillis(),val nextReviewAt:Long=System.currentTimeMillis())

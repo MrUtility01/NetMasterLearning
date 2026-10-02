@@ -11,19 +11,22 @@ interface AiProvider{suspend fun ask(mode:AiMode,prompt:String,context:List<Less
 
 class OfflineAiProvider:AiProvider{
     private fun groundedPrompt(prompt:String, context:List<Lesson>):String {
-        val ctx=context.take(8).joinToString("\n\n"){l->"[SOURCE ${l.id}] ${l.title}\n${l.internals}\n${l.packet_state_walkthrough}\n${l.configurationPlaybook}\n${l.verification}\n${l.failure_analysis}"}
+        val ctx=context.take(8).joinToString("\n\n"){l->"[SOURCE ${l.id}] ${l.title}\n${l.deepTechnical}\n${l.packetWalkthrough}\n${l.configurationPlaybook}\n${l.troubleshooting}\n${l.failureMatrix.joinToString { f -> f.symptom + \" -> \" + f.next }}"}
         return "Knowledge-grounded context:\n$ctx\n\nUser request:\n$prompt"
     }
     override suspend fun ask(mode:AiMode,prompt:String,context:List<Lesson>):AiResponse{
         val grounded=groundedPrompt(prompt,context)
         val related=context.take(4).joinToString("، "){it.title}
         return when(mode){
-            AiMode.TEACHER->AiResponse("استاد NetMaster","$grounded\n\nموضوع را با ترتیب Concept → Architecture → Internals → Packet/State → Configuration → Verification → Troubleshooting → Lab → Production یاد بگیر. مباحث مرتبط: $related",safetyNotes=listOf("این پاسخ Offline و deterministic است."))
-            AiMode.SOCRATIC->AiResponse("راهنمای سقراطی","$grounded\n\nبه‌جای حدس یک سؤال قابل‌آزمایش انتخاب کن: Scope چیست؟ کدام Layer محتمل است؟ چه Evidenceای آن را تأیید یا رد می‌کند؟",safetyNotes=listOf("هیچ Testای روی تجهیز واقعی اجرا نشده است."))
-            AiMode.EXAMINER->AiResponse("آزمون","$grounded\n\nبدون نگاه به پاسخ، Symptom، Hypothesis، Evidence و اولین Test کم‌خطر را بنویس؛ سپس نتیجه را با معیار acceptance مقایسه کن.",safetyNotes=listOf("از تغییر Configuration برای پاسخ‌دادن به سؤال تا مشخص‌شدن علت خودداری کن."))
-            AiMode.TROUBLESHOOTER, AiMode.AUTONOMOUS_COACH->AiResponse("Troubleshooting Coach","$grounded\n\nاز Interface/Link شروع کن، سپس ARP/ND، Route/FIB، Service/DNS و در پایان Policy/Firewall را بررسی کن.",listOf(AiHypothesis("Layered path fault",60,listOf("interface status","arp/nd","route","service probe"))),listOf("show interfaces status","show arp","show ip route","nslookup example.com"),listOf("فقط Simulator داخلی قابل اجرای خودکار است."))
-            AiMode.LAB_COACH->AiResponse("Lab Coach","$grounded\n\nLab را به Baseline → Fault Injection → Capture/Logs → Root Cause → Fix → Rollback تقسیم کن.",safetyNotes=listOf("Change واقعی بدون تأیید انسانی انجام نمی‌شود."))
-            AiMode.CONFIG_REVIEWER->AiResponse("Config Reviewer","$grounded\n\nConfiguration را از نظر ordering، scope، least privilege، logging و rollback بررسی کن.",safetyNotes=listOf("این بررسی جایگزین Review انسانی نیست."))
+            AiMode.TEACHER->AiResponse("استاد NetMaster","$grounded\n\nموضوع را با ترتیب Concept → Architecture → Internals → Packet/State → Configuration → Verification توضیح بده. منابع مرتبط: $related")
+            AiMode.SOCRATIC->AiResponse("راهنمای سقراطی","$grounded\n\nبه‌جای حدس یک سؤال قابل‌آزمایش انتخاب کن: Scope چیست؟ کدام Layer محتمل است؟ چه Evidence کم‌هزینه‌ای داری؟")
+            AiMode.EXAMINER->AiResponse("آزمون","$grounded\n\nبدون نگاه به پاسخ، Symptom، Hypothesis، Evidence و اولین Test کم‌خطر را بنویس؛ سپس نتیجه را با واقعیت بسنج.")
+            AiMode.TROUBLESHOOTER, AiMode.AUTONOMOUS_COACH->AiResponse("Troubleshooting Coach","$grounded\n\nاز Interface/Link شروع کن، سپس ARP/ND، Routing، DNS، Firewall/NAT و Application. منابع: $related",
+                hypotheses=listOf(AiHypothesis("L2/L3 fault",70,listOf("interface status","arp","route")),AiHypothesis("DNS/Firewall",55,listOf("nslookup","acl counters"))),
+                nextTests=listOf("ping gateway","traceroute","check logs"),
+                safetyNotes=listOf("تغییر production فقط با change window"))
+            AiMode.LAB_COACH->AiResponse("Lab Coach","$grounded\n\nLab را به Baseline → Fault Injection → Capture/Logs → Root Cause → Fix → Rollback تقسیم کن.")
+            AiMode.CONFIG_REVIEWER->AiResponse("Config Reviewer","$grounded\n\nDiff را بر اساس intent بررسی کن: security impact، routing impact، blast radius و rollback plan.")
         }
     }
 }
