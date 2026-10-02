@@ -1,0 +1,12 @@
+{
+  "version":"11.0",
+  "model":"Engineering evidence, not attendance",
+  "competencies":[
+    {"id":"core","name":"Core Networking","weight":0.22,"inputs":["lesson_completion","mastery"]},
+    {"id":"troubleshooting","name":"Troubleshooting","weight":0.22,"inputs":["mastery","resolved_incidents","first_divergence"]},
+    {"id":"packet","name":"Packet Analysis","weight":0.20,"inputs":["mastery","pcap_captures","packet_findings"]},
+    {"id":"operations","name":"Operational Reasoning","weight":0.18,"inputs":["incident_evidence","discriminating_tests","rollback"]},
+    {"id":"evidence","name":"Engineering Evidence","weight":0.18,"inputs":["hard_evidence","causal_chain","verification"]}
+  ],
+  "levels":["Foundation","Professional","Field Engineer","Senior Engineer","Forensics Engineer","Architecture/Capstone"]
+}

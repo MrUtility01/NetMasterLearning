@@ -1,0 +1,260 @@
+{
+  "version": "7.0",
+  "tracks": [
+    {
+      "level": 66,
+      "title": "AI Foundations",
+      "mastery_layers": [
+        "concept",
+        "deep_dive",
+        "architecture",
+        "implementation",
+        "validation",
+        "failure_analysis",
+        "lab",
+        "troubleshooting",
+        "quiz",
+        "capstone"
+      ],
+      "lesson_count": 12
+    },
+    {
+      "level": 67,
+      "title": "Python for AI",
+      "mastery_layers": [
+        "concept",
+        "deep_dive",
+        "architecture",
+        "implementation",
+        "validation",
+        "failure_analysis",
+        "lab",
+        "troubleshooting",
+        "quiz",
+        "capstone"
+      ],
+      "lesson_count": 12
+    },
+    {
+      "level": 68,
+      "title": "Statistics & Data",
+      "mastery_layers": [
+        "concept",
+        "deep_dive",
+        "architecture",
+        "implementation",
+        "validation",
+        "failure_analysis",
+        "lab",
+        "troubleshooting",
+        "quiz",
+        "capstone"
+      ],
+      "lesson_count": 12
+    },
+    {
+      "level": 69,
+      "title": "Classical Machine Learning",
+      "mastery_layers": [
+        "concept",
+        "deep_dive",
+        "architecture",
+        "implementation",
+        "validation",
+        "failure_analysis",
+        "lab",
+        "troubleshooting",
+        "quiz",
+        "capstone"
+      ],
+      "lesson_count": 12
+    },
+    {
+      "level": 70,
+      "title": "Deep Learning",
+      "mastery_layers": [
+        "concept",
+        "deep_dive",
+        "architecture",
+        "implementation",
+        "validation",
+        "failure_analysis",
+        "lab",
+        "troubleshooting",
+        "quiz",
+        "capstone"
+      ],
+      "lesson_count": 12
+    },
+    {
+      "level": 71,
+      "title": "LLM Engineering",
+      "mastery_layers": [
+        "concept",
+        "deep_dive",
+        "architecture",
+        "implementation",
+        "validation",
+        "failure_analysis",
+        "lab",
+        "troubleshooting",
+        "quiz",
+        "capstone"
+      ],
+      "lesson_count": 12
+    },
+    {
+      "level": 72,
+      "title": "RAG Engineering",
+      "mastery_layers": [
+        "concept",
+        "deep_dive",
+        "architecture",
+        "implementation",
+        "validation",
+        "failure_analysis",
+        "lab",
+        "troubleshooting",
+        "quiz",
+        "capstone"
+      ],
+      "lesson_count": 12
+    },
+    {
+      "level": 73,
+      "title": "AI Agents",
+      "mastery_layers": [
+        "concept",
+        "deep_dive",
+        "architecture",
+        "implementation",
+        "validation",
+        "failure_analysis",
+        "lab",
+        "troubleshooting",
+        "quiz",
+        "capstone"
+      ],
+      "lesson_count": 12
+    },
+    {
+      "level": 74,
+      "title": "AI Security",
+      "mastery_layers": [
+        "concept",
+        "deep_dive",
+        "architecture",
+        "implementation",
+        "validation",
+        "failure_analysis",
+        "lab",
+        "troubleshooting",
+        "quiz",
+        "capstone"
+      ],
+      "lesson_count": 12
+    },
+    {
+      "level": 75,
+      "title": "AI Infrastructure & MLOps",
+      "mastery_layers": [
+        "concept",
+        "deep_dive",
+        "architecture",
+        "implementation",
+        "validation",
+        "failure_analysis",
+        "lab",
+        "troubleshooting",
+        "quiz",
+        "capstone"
+      ],
+      "lesson_count": 12
+    },
+    {
+      "level": 76,
+      "title": "AIOps",
+      "mastery_layers": [
+        "concept",
+        "deep_dive",
+        "architecture",
+        "implementation",
+        "validation",
+        "failure_analysis",
+        "lab",
+        "troubleshooting",
+        "quiz",
+        "capstone"
+      ],
+      "lesson_count": 12
+    },
+    {
+      "level": 77,
+      "title": "AI for Networking",
+      "mastery_layers": [
+        "concept",
+        "deep_dive",
+        "architecture",
+        "implementation",
+        "validation",
+        "failure_analysis",
+        "lab",
+        "troubleshooting",
+        "quiz",
+        "capstone"
+      ],
+      "lesson_count": 12
+    },
+    {
+      "level": 78,
+      "title": "AI for SOC",
+      "mastery_layers": [
+        "concept",
+        "deep_dive",
+        "architecture",
+        "implementation",
+        "validation",
+        "failure_analysis",
+        "lab",
+        "troubleshooting",
+        "quiz",
+        "capstone"
+      ],
+      "lesson_count": 12
+    },
+    {
+      "level": 79,
+      "title": "Local Private AI",
+      "mastery_layers": [
+        "concept",
+        "deep_dive",
+        "architecture",
+        "implementation",
+        "validation",
+        "failure_analysis",
+        "lab",
+        "troubleshooting",
+        "quiz",
+        "capstone"
+      ],
+      "lesson_count": 12
+    },
+    {
+      "level": 80,
+      "title": "AI Capstone",
+      "mastery_layers": [
+        "concept",
+        "deep_dive",
+        "architecture",
+        "implementation",
+        "validation",
+        "failure_analysis",
+        "lab",
+        "troubleshooting",
+        "quiz",
+        "capstone"
+      ],
+      "lesson_count": 12
+    }
+  ]
+}

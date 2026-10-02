@@ -1,0 +1,9 @@
+{
+  "version": "11.0",
+  "nodes": [
+    {"id":"client","name":"Client","kind":"endpoint"},{"id":"ethernet","name":"Ethernet","kind":"l2"},{"id":"vlan","name":"VLAN/Trunk","kind":"l2"},{"id":"stp","name":"STP","kind":"control"},{"id":"arp","name":"ARP/ND","kind":"l3"},{"id":"routing","name":"RIB/FIB","kind":"l3"},{"id":"nat","name":"NAT/Conntrack","kind":"edge"},{"id":"firewall","name":"Firewall/ACL","kind":"policy"},{"id":"dhcp","name":"DHCP","kind":"service"},{"id":"dns","name":"DNS","kind":"service"},{"id":"time","name":"Time/NTP","kind":"service"},{"id":"ad","name":"AD/Kerberos","kind":"identity"},{"id":"tcp","name":"TCP","kind":"transport"},{"id":"tls","name":"TLS","kind":"security"},{"id":"app","name":"Application","kind":"application"},{"id":"monitoring","name":"Monitoring","kind":"operations"}
+  ],
+  "edges": [
+    ["client","ethernet","depends_on"],["ethernet","vlan","depends_on"],["vlan","stp","influenced_by"],["client","arp","depends_on"],["arp","routing","precedes"],["routing","firewall","passes_through"],["firewall","nat","passes_through"],["nat","tcp","enables_return_path"],["dhcp","client","assigns_state"],["dns","app","enables_name_resolution"],["time","ad","enables_authentication"],["dns","ad","service_discovery"],["tcp","tls","carries"],["tls","app","secures"],["routing","monitoring","supports_reachability"],["firewall","monitoring","emits_observability"]
+  ]
+}

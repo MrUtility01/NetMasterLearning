@@ -1,0 +1,74 @@
+{
+  "ospf": [
+    "open shortest path first",
+    "link state",
+    "lsa",
+    "spf"
+  ],
+  "bgp": [
+    "border gateway protocol",
+    "as path",
+    "best path"
+  ],
+  "dhcp": [
+    "dora",
+    "lease",
+    "relay",
+    "bootp"
+  ],
+  "dns": [
+    "domain name system",
+    "resolver",
+    "authoritative",
+    "recursive"
+  ],
+  "mikrotik": [
+    "routeros",
+    "ros"
+  ],
+  "cisco": [
+    "ios",
+    "ios-xe"
+  ],
+  "tcp": [
+    "transmission control protocol",
+    "syn",
+    "ack"
+  ],
+  "udp": [
+    "user datagram protocol"
+  ],
+  "vlan": [
+    "802.1q",
+    "tagging"
+  ],
+  "stp": [
+    "spanning tree",
+    "rstp",
+    "bpdu"
+  ],
+  "rag": [
+    "retrieval augmented generation",
+    "vector search",
+    "embedding"
+  ],
+  "llm": [
+    "large language model",
+    "transformer"
+  ],
+  "ai": [
+    "artificial intelligence",
+    "machine learning",
+    "ml"
+  ],
+  "pcap": [
+    "packet capture",
+    "wireshark"
+  ],
+  "troubleshooting": [
+    "break fix",
+    "incident",
+    "root cause",
+    "rca"
+  ]
+}

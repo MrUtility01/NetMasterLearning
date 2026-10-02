@@ -1,0 +1,1493 @@
+{
+  "version": "4.0",
+  "labs": [
+    {
+      "id": "LAB-001",
+      "title": "Packet Journey & Protocol Engineering — Lab 01",
+      "phase": "Packet Journey & Protocol Engineering",
+      "mode": "Guided",
+      "objective": "پیاده‌سازی و اثبات مهارت Packet Journey & Protocol Engineering با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-002",
+      "title": "Enterprise Switching Engineering — Lab 02",
+      "phase": "Enterprise Switching Engineering",
+      "mode": "Packet Trace",
+      "objective": "پیاده‌سازی و اثبات مهارت Enterprise Switching Engineering با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-003",
+      "title": "Routing Control/Data Plane — Lab 03",
+      "phase": "Routing Control/Data Plane",
+      "mode": "Fault Injection",
+      "objective": "پیاده‌سازی و اثبات مهارت Routing Control/Data Plane با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-004",
+      "title": "Security Engineering & Defense — Lab 04",
+      "phase": "Security Engineering & Defense",
+      "mode": "PCAP Investigation",
+      "objective": "پیاده‌سازی و اثبات مهارت Security Engineering & Defense با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-005",
+      "title": "Infrastructure Services Engineering — Lab 05",
+      "phase": "Infrastructure Services Engineering",
+      "mode": "Config Diff",
+      "objective": "پیاده‌سازی و اثبات مهارت Infrastructure Services Engineering با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-006",
+      "title": "Wireless, Voice & Real-Time Traffic — Lab 06",
+      "phase": "Wireless, Voice & Real-Time Traffic",
+      "mode": "Incident Response",
+      "objective": "پیاده‌سازی و اثبات مهارت Wireless, Voice & Real-Time Traffic با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-007",
+      "title": "Virtualization, Cloud & Data Center Networking — Lab 07",
+      "phase": "Virtualization, Cloud & Data Center Networking",
+      "mode": "Automation",
+      "objective": "پیاده‌سازی و اثبات مهارت Virtualization, Cloud & Data Center Networking با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-008",
+      "title": "Observability & Monitoring Engineering — Lab 08",
+      "phase": "Observability & Monitoring Engineering",
+      "mode": "Capstone",
+      "objective": "پیاده‌سازی و اثبات مهارت Observability & Monitoring Engineering با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-009",
+      "title": "Automation & Network as Code — Lab 09",
+      "phase": "Automation & Network as Code",
+      "mode": "Guided",
+      "objective": "پیاده‌سازی و اثبات مهارت Automation & Network as Code با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-010",
+      "title": "Incident Response & Digital Forensics — Lab 10",
+      "phase": "Incident Response & Digital Forensics",
+      "mode": "Packet Trace",
+      "objective": "پیاده‌سازی و اثبات مهارت Incident Response & Digital Forensics با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-011",
+      "title": "Enterprise Architecture & Capstone — Lab 11",
+      "phase": "Enterprise Architecture & Capstone",
+      "mode": "Fault Injection",
+      "objective": "پیاده‌سازی و اثبات مهارت Enterprise Architecture & Capstone با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-012",
+      "title": "AI for Network Engineering & AIOps — Lab 12",
+      "phase": "AI for Network Engineering & AIOps",
+      "mode": "PCAP Investigation",
+      "objective": "پیاده‌سازی و اثبات مهارت AI for Network Engineering & AIOps با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-013",
+      "title": "Packet Journey & Protocol Engineering — Lab 13",
+      "phase": "Packet Journey & Protocol Engineering",
+      "mode": "Config Diff",
+      "objective": "پیاده‌سازی و اثبات مهارت Packet Journey & Protocol Engineering با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-014",
+      "title": "Enterprise Switching Engineering — Lab 14",
+      "phase": "Enterprise Switching Engineering",
+      "mode": "Incident Response",
+      "objective": "پیاده‌سازی و اثبات مهارت Enterprise Switching Engineering با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-015",
+      "title": "Routing Control/Data Plane — Lab 15",
+      "phase": "Routing Control/Data Plane",
+      "mode": "Automation",
+      "objective": "پیاده‌سازی و اثبات مهارت Routing Control/Data Plane با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-016",
+      "title": "Security Engineering & Defense — Lab 16",
+      "phase": "Security Engineering & Defense",
+      "mode": "Capstone",
+      "objective": "پیاده‌سازی و اثبات مهارت Security Engineering & Defense با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-017",
+      "title": "Infrastructure Services Engineering — Lab 17",
+      "phase": "Infrastructure Services Engineering",
+      "mode": "Guided",
+      "objective": "پیاده‌سازی و اثبات مهارت Infrastructure Services Engineering با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-018",
+      "title": "Wireless, Voice & Real-Time Traffic — Lab 18",
+      "phase": "Wireless, Voice & Real-Time Traffic",
+      "mode": "Packet Trace",
+      "objective": "پیاده‌سازی و اثبات مهارت Wireless, Voice & Real-Time Traffic با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-019",
+      "title": "Virtualization, Cloud & Data Center Networking — Lab 19",
+      "phase": "Virtualization, Cloud & Data Center Networking",
+      "mode": "Fault Injection",
+      "objective": "پیاده‌سازی و اثبات مهارت Virtualization, Cloud & Data Center Networking با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-020",
+      "title": "Observability & Monitoring Engineering — Lab 20",
+      "phase": "Observability & Monitoring Engineering",
+      "mode": "PCAP Investigation",
+      "objective": "پیاده‌سازی و اثبات مهارت Observability & Monitoring Engineering با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-021",
+      "title": "Automation & Network as Code — Lab 21",
+      "phase": "Automation & Network as Code",
+      "mode": "Config Diff",
+      "objective": "پیاده‌سازی و اثبات مهارت Automation & Network as Code با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-022",
+      "title": "Incident Response & Digital Forensics — Lab 22",
+      "phase": "Incident Response & Digital Forensics",
+      "mode": "Incident Response",
+      "objective": "پیاده‌سازی و اثبات مهارت Incident Response & Digital Forensics با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-023",
+      "title": "Enterprise Architecture & Capstone — Lab 23",
+      "phase": "Enterprise Architecture & Capstone",
+      "mode": "Automation",
+      "objective": "پیاده‌سازی و اثبات مهارت Enterprise Architecture & Capstone با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-024",
+      "title": "AI for Network Engineering & AIOps — Lab 24",
+      "phase": "AI for Network Engineering & AIOps",
+      "mode": "Capstone",
+      "objective": "پیاده‌سازی و اثبات مهارت AI for Network Engineering & AIOps با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-025",
+      "title": "Packet Journey & Protocol Engineering — Lab 25",
+      "phase": "Packet Journey & Protocol Engineering",
+      "mode": "Guided",
+      "objective": "پیاده‌سازی و اثبات مهارت Packet Journey & Protocol Engineering با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-026",
+      "title": "Enterprise Switching Engineering — Lab 26",
+      "phase": "Enterprise Switching Engineering",
+      "mode": "Packet Trace",
+      "objective": "پیاده‌سازی و اثبات مهارت Enterprise Switching Engineering با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-027",
+      "title": "Routing Control/Data Plane — Lab 27",
+      "phase": "Routing Control/Data Plane",
+      "mode": "Fault Injection",
+      "objective": "پیاده‌سازی و اثبات مهارت Routing Control/Data Plane با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-028",
+      "title": "Security Engineering & Defense — Lab 28",
+      "phase": "Security Engineering & Defense",
+      "mode": "PCAP Investigation",
+      "objective": "پیاده‌سازی و اثبات مهارت Security Engineering & Defense با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-029",
+      "title": "Infrastructure Services Engineering — Lab 29",
+      "phase": "Infrastructure Services Engineering",
+      "mode": "Config Diff",
+      "objective": "پیاده‌سازی و اثبات مهارت Infrastructure Services Engineering با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-030",
+      "title": "Wireless, Voice & Real-Time Traffic — Lab 30",
+      "phase": "Wireless, Voice & Real-Time Traffic",
+      "mode": "Incident Response",
+      "objective": "پیاده‌سازی و اثبات مهارت Wireless, Voice & Real-Time Traffic با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-031",
+      "title": "Virtualization, Cloud & Data Center Networking — Lab 31",
+      "phase": "Virtualization, Cloud & Data Center Networking",
+      "mode": "Automation",
+      "objective": "پیاده‌سازی و اثبات مهارت Virtualization, Cloud & Data Center Networking با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-032",
+      "title": "Observability & Monitoring Engineering — Lab 32",
+      "phase": "Observability & Monitoring Engineering",
+      "mode": "Capstone",
+      "objective": "پیاده‌سازی و اثبات مهارت Observability & Monitoring Engineering با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-033",
+      "title": "Automation & Network as Code — Lab 33",
+      "phase": "Automation & Network as Code",
+      "mode": "Guided",
+      "objective": "پیاده‌سازی و اثبات مهارت Automation & Network as Code با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-034",
+      "title": "Incident Response & Digital Forensics — Lab 34",
+      "phase": "Incident Response & Digital Forensics",
+      "mode": "Packet Trace",
+      "objective": "پیاده‌سازی و اثبات مهارت Incident Response & Digital Forensics با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-035",
+      "title": "Enterprise Architecture & Capstone — Lab 35",
+      "phase": "Enterprise Architecture & Capstone",
+      "mode": "Fault Injection",
+      "objective": "پیاده‌سازی و اثبات مهارت Enterprise Architecture & Capstone با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-036",
+      "title": "AI for Network Engineering & AIOps — Lab 36",
+      "phase": "AI for Network Engineering & AIOps",
+      "mode": "PCAP Investigation",
+      "objective": "پیاده‌سازی و اثبات مهارت AI for Network Engineering & AIOps با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-037",
+      "title": "Packet Journey & Protocol Engineering — Lab 37",
+      "phase": "Packet Journey & Protocol Engineering",
+      "mode": "Config Diff",
+      "objective": "پیاده‌سازی و اثبات مهارت Packet Journey & Protocol Engineering با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-038",
+      "title": "Enterprise Switching Engineering — Lab 38",
+      "phase": "Enterprise Switching Engineering",
+      "mode": "Incident Response",
+      "objective": "پیاده‌سازی و اثبات مهارت Enterprise Switching Engineering با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-039",
+      "title": "Routing Control/Data Plane — Lab 39",
+      "phase": "Routing Control/Data Plane",
+      "mode": "Automation",
+      "objective": "پیاده‌سازی و اثبات مهارت Routing Control/Data Plane با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-040",
+      "title": "Security Engineering & Defense — Lab 40",
+      "phase": "Security Engineering & Defense",
+      "mode": "Capstone",
+      "objective": "پیاده‌سازی و اثبات مهارت Security Engineering & Defense با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-041",
+      "title": "Infrastructure Services Engineering — Lab 41",
+      "phase": "Infrastructure Services Engineering",
+      "mode": "Guided",
+      "objective": "پیاده‌سازی و اثبات مهارت Infrastructure Services Engineering با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-042",
+      "title": "Wireless, Voice & Real-Time Traffic — Lab 42",
+      "phase": "Wireless, Voice & Real-Time Traffic",
+      "mode": "Packet Trace",
+      "objective": "پیاده‌سازی و اثبات مهارت Wireless, Voice & Real-Time Traffic با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-043",
+      "title": "Virtualization, Cloud & Data Center Networking — Lab 43",
+      "phase": "Virtualization, Cloud & Data Center Networking",
+      "mode": "Fault Injection",
+      "objective": "پیاده‌سازی و اثبات مهارت Virtualization, Cloud & Data Center Networking با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-044",
+      "title": "Observability & Monitoring Engineering — Lab 44",
+      "phase": "Observability & Monitoring Engineering",
+      "mode": "PCAP Investigation",
+      "objective": "پیاده‌سازی و اثبات مهارت Observability & Monitoring Engineering با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-045",
+      "title": "Automation & Network as Code — Lab 45",
+      "phase": "Automation & Network as Code",
+      "mode": "Config Diff",
+      "objective": "پیاده‌سازی و اثبات مهارت Automation & Network as Code با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-046",
+      "title": "Incident Response & Digital Forensics — Lab 46",
+      "phase": "Incident Response & Digital Forensics",
+      "mode": "Incident Response",
+      "objective": "پیاده‌سازی و اثبات مهارت Incident Response & Digital Forensics با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-047",
+      "title": "Enterprise Architecture & Capstone — Lab 47",
+      "phase": "Enterprise Architecture & Capstone",
+      "mode": "Automation",
+      "objective": "پیاده‌سازی و اثبات مهارت Enterprise Architecture & Capstone با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    },
+    {
+      "id": "LAB-048",
+      "title": "AI for Network Engineering & AIOps — Lab 48",
+      "phase": "AI for Network Engineering & AIOps",
+      "mode": "Capstone",
+      "objective": "پیاده‌سازی و اثبات مهارت AI for Network Engineering & AIOps با روش Evidence-driven.",
+      "topology": "Client → Access Switch → Core/Router → Firewall → Service/Internet",
+      "inputs": [
+        "IP plan",
+        "device configuration",
+        "logs/telemetry",
+        "optional PCAP"
+      ],
+      "steps": [
+        "Baseline",
+        "Execute/Inject",
+        "Observe",
+        "Hypothesize",
+        "Test",
+        "Fix",
+        "Verify",
+        "Rollback"
+      ],
+      "acceptance": [
+        "Expected state matches baseline design",
+        "Traffic path is proven",
+        "No unexplained errors remain",
+        "Rollback succeeds"
+      ],
+      "safety": "فقط در Lab/Simulator؛ تغییر واقعی نیازمند تأیید انسانی است."
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "version": "11.0",
+  "title": "V11 Controlled Failure Injection Catalog",
+  "rule": "Every fault must declare expected evidence, first divergence, remediation, and rollback.",
+  "cases": [
+    {"id":"dhcp-offer","title":"DHCP Offer Missing","layer":"L3/Service","firstDivergence":"Discover → Offer","symptom":"Client broadcasts Discover but Offer never appears","evidence":["Discover","Offer absent","relay giaddr","UDP 67/68"],"remediation":"Validate VLAN/relay/scope and return path","rollback":"Restore prior relay or VLAN policy"},
+    {"id":"dns-servfail","title":"DNS SERVFAIL","layer":"Service","firstDivergence":"Resolver → authoritative response","symptom":"Names fail while IP reachability remains","evidence":["SERVFAIL","resolver logs","authoritative query"],"remediation":"Trace recursion and delegation","rollback":"Restore prior resolver configuration"},
+    {"id":"ospf-mtu","title":"OSPF MTU Mismatch","layer":"Control Plane","firstDivergence":"ExStart → DBD exchange","symptom":"Neighbor fails to reach Full","evidence":["ExStart","DBD","MTU values"],"remediation":"Align effective MTU or document exception","rollback":"Restore prior interface MTU"},
+    {"id":"vlan-allow","title":"Trunk VLAN Omission","layer":"L2","firstDivergence":"Trunk → allowed VLAN","symptom":"Some VLANs fail across an uplink","evidence":["allowed list","tagged frames","MAC learning"],"remediation":"Restore intended VLAN in allowlist","rollback":"Restore previous allowlist"},
+    {"id":"tcp-mss","title":"TCP MSS/MTU Black Hole","layer":"Transport","firstDivergence":"Large segment → missing ACK","symptom":"Handshake works but large transfers stall","evidence":["SYN MSS","DF/ICMP","retransmissions"],"remediation":"Validate PMTUD/MSS and filtering","rollback":"Restore prior MTU/MSS policy"},
+    {"id":"fw-order","title":"Firewall Rule Shadowing","layer":"Policy","firstDivergence":"Packet → higher-priority deny","symptom":"Expected traffic is dropped","evidence":["rule counters","ordering","state table"],"remediation":"Narrow or reorder rule after review","rollback":"Restore prior rule order"},
+    {"id":"nat-state","title":"NAT Conntrack Asymmetry","layer":"Data Plane","firstDivergence":"Translated flow → return path","symptom":"Outbound creates but reply never returns","evidence":["conntrack","translated tuple","return route"],"remediation":"Check srcnat, state and asymmetric routing","rollback":"Rollback NAT/policy change"},
+    {"id":"stp-root","title":"STP Root Change","layer":"L2 Control Plane","firstDivergence":"Expected root → unexpected root/path","symptom":"Path changes and topology churn","evidence":["BPDU","root ID","port roles","TCN"],"remediation":"Validate root priority and edge controls","rollback":"Restore intended root priority"}
+  ]
+}

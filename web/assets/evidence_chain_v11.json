@@ -1,0 +1,15 @@
+{
+  "version": "11.0",
+  "name": "Engineering Evidence Chain",
+  "principle": "Every conclusion must be traceable to an observable evidence item, a protocol/state transition, a causal relation, and a falsifiable test.",
+  "evidenceTypes": ["PACKET","LOG","CONFIG","METRIC","STATE","TEST_RESULT","OBSERVATION"],
+  "states": ["COLLECTED","CORRELATED","DISCRIMINATED","CAUSAL","VERIFIED","REJECTED"],
+  "causalRelations": ["PRECEDES","CAUSES","BLOCKS","DEPENDS_ON","EXPOSES","DISPROVES","VERIFIES"],
+  "qualityRules": [
+    "Hard evidence outranks symptom narrative.",
+    "First divergence is preferred over downstream symptoms.",
+    "Every hypothesis must have a falsifier.",
+    "Every remediation requires verification and rollback criteria.",
+    "No real-device mutation occurs without explicit human approval."
+  ]
+}

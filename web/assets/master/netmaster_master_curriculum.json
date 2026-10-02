@@ -1,0 +1,459 @@
+{
+  "schemaVersion": "1.0",
+  "product": "NetMaster Mastery Path",
+  "version": "4.0.0",
+  "language": "fa-IR",
+  "purpose": "یک مسیر واحد آموزشی از صفر تا مهندس ارشد شبکه، با جست‌وجوی مرکزی، RAG، AI، Lab، Simulator، PCAP، Incident و Spaced Review.",
+  "contentModel": {
+    "core": "curriculum.json",
+    "deep": "deep/expert_engineering.json",
+    "scenarios": "deep/scenarios.json",
+    "fieldEngineering": "12 tracks × 10 lessons added to curriculum",
+    "lessonPipeline": [
+      "Concept",
+      "Architecture",
+      "Packet/State",
+      "Configuration",
+      "Verification",
+      "Troubleshooting",
+      "Lab",
+      "Quiz",
+      "Project/Capstone"
+    ]
+  },
+  "phases": [
+    {
+      "id": 1,
+      "name": "Packet Journey & Protocol Engineering",
+      "levels": [
+        66
+      ],
+      "topics": [
+        "Frame anatomy و MTU",
+        "ARP/ND و neighbor discovery",
+        "IPv4 forwarding و TTL",
+        "IPv6 forwarding و extension headers",
+        "TCP handshake و state machine",
+        "TCP retransmission و congestion",
+        "UDP و application multiplexing",
+        "DNS resolution path",
+        "HTTPS/TLS handshake",
+        "End-to-end packet trace"
+      ],
+      "platforms": [
+        "Cisco IOS/IOS-XE",
+        "MikroTik RouterOS",
+        "Linux",
+        "Windows Server",
+        "EVE-NG/GNS3"
+      ],
+      "labModes": [
+        "Guided",
+        "Fault Injection",
+        "Evidence Challenge",
+        "Capstone"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Enterprise Switching Engineering",
+      "levels": [
+        67
+      ],
+      "topics": [
+        "VLAN design و segmentation",
+        "802.1Q trunking",
+        "Native VLAN و tagging",
+        "STP root bridge",
+        "RSTP convergence",
+        "LACP و EtherChannel",
+        "Port security و edge ports",
+        "Voice VLAN و QoS marking",
+        "MLAG و redundancy concepts",
+        "Switch failure-domain design"
+      ],
+      "platforms": [
+        "Cisco IOS/IOS-XE",
+        "MikroTik RouterOS",
+        "Linux",
+        "Windows Server",
+        "EVE-NG/GNS3"
+      ],
+      "labModes": [
+        "Guided",
+        "Fault Injection",
+        "Evidence Challenge",
+        "Capstone"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Routing Control/Data Plane",
+      "levels": [
+        68
+      ],
+      "topics": [
+        "Routing table vs FIB",
+        "Static routing engineering",
+        "Default route و route selection",
+        "OSPF neighbor formation",
+        "OSPF LSDB و SPF",
+        "OSPF area design",
+        "BGP session و attributes",
+        "BGP best-path reasoning",
+        "ECMP و asymmetric routing",
+        "Route leak و containment"
+      ],
+      "platforms": [
+        "Cisco IOS/IOS-XE",
+        "MikroTik RouterOS",
+        "Linux",
+        "Windows Server",
+        "EVE-NG/GNS3"
+      ],
+      "labModes": [
+        "Guided",
+        "Fault Injection",
+        "Evidence Challenge",
+        "Capstone"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Security Engineering & Defense",
+      "levels": [
+        69
+      ],
+      "topics": [
+        "Threat modeling for networks",
+        "AAA و centralized identity",
+        "ACL design و rule ordering",
+        "Stateful firewall behavior",
+        "NAT security implications",
+        "IPsec concepts و tunnel states",
+        "Zero Trust network segmentation",
+        "802.1X و NAC",
+        "IDS/IPS evidence analysis",
+        "Hardening baseline و verification"
+      ],
+      "platforms": [
+        "Cisco IOS/IOS-XE",
+        "MikroTik RouterOS",
+        "Linux",
+        "Windows Server",
+        "EVE-NG/GNS3"
+      ],
+      "labModes": [
+        "Guided",
+        "Fault Injection",
+        "Evidence Challenge",
+        "Capstone"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Infrastructure Services Engineering",
+      "levels": [
+        70
+      ],
+      "topics": [
+        "DHCP lease lifecycle",
+        "DHCP relay و option handling",
+        "DNS recursive resolution",
+        "Authoritative DNS",
+        "Split DNS design",
+        "NTP و clock discipline",
+        "PKI و certificate chain",
+        "Directory services و LDAP",
+        "Proxy و reverse proxy",
+        "Service dependency mapping"
+      ],
+      "platforms": [
+        "Cisco IOS/IOS-XE",
+        "MikroTik RouterOS",
+        "Linux",
+        "Windows Server",
+        "EVE-NG/GNS3"
+      ],
+      "labModes": [
+        "Guided",
+        "Fault Injection",
+        "Evidence Challenge",
+        "Capstone"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Wireless, Voice & Real-Time Traffic",
+      "levels": [
+        71
+      ],
+      "topics": [
+        "802.11 association flow",
+        "RF channels و interference",
+        "Roaming و fast transition",
+        "WPA2/WPA3 authentication",
+        "Wireless troubleshooting with captures",
+        "SIP registration",
+        "SIP call setup",
+        "RTP media path",
+        "Voice VLAN و DSCP",
+        "QoS for latency-sensitive traffic"
+      ],
+      "platforms": [
+        "Cisco IOS/IOS-XE",
+        "MikroTik RouterOS",
+        "Linux",
+        "Windows Server",
+        "EVE-NG/GNS3"
+      ],
+      "labModes": [
+        "Guided",
+        "Fault Injection",
+        "Evidence Challenge",
+        "Capstone"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Virtualization, Cloud & Data Center Networking",
+      "levels": [
+        72
+      ],
+      "topics": [
+        "vSwitch and virtual NIC",
+        "VLANs in virtualization",
+        "VMware distributed switching concepts",
+        "Hypervisor management networks",
+        "VXLAN/overlay fundamentals",
+        "Cloud VPC/VNet primitives",
+        "Security groups vs network ACLs",
+        "Load balancer traffic flow",
+        "NAT gateways and routing domains",
+        "Data-center failure domains"
+      ],
+      "platforms": [
+        "Cisco IOS/IOS-XE",
+        "MikroTik RouterOS",
+        "Linux",
+        "Windows Server",
+        "EVE-NG/GNS3"
+      ],
+      "labModes": [
+        "Guided",
+        "Fault Injection",
+        "Evidence Challenge",
+        "Capstone"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Observability & Monitoring Engineering",
+      "levels": [
+        73
+      ],
+      "topics": [
+        "Observability pillars",
+        "SNMP polling vs traps",
+        "Zabbix host/template design",
+        "Time-series metrics",
+        "Log collection and parsing",
+        "Syslog pipeline",
+        "Flow telemetry and NetFlow",
+        "Synthetic checks",
+        "Alert correlation and noise reduction",
+        "SLO/SLI for network services"
+      ],
+      "platforms": [
+        "Cisco IOS/IOS-XE",
+        "MikroTik RouterOS",
+        "Linux",
+        "Windows Server",
+        "EVE-NG/GNS3"
+      ],
+      "labModes": [
+        "Guided",
+        "Fault Injection",
+        "Evidence Challenge",
+        "Capstone"
+      ]
+    },
+    {
+      "id": 9,
+      "name": "Automation & Network as Code",
+      "levels": [
+        74
+      ],
+      "topics": [
+        "Automation safety model",
+        "Python networking primitives",
+        "SSH automation patterns",
+        "RouterOS API/REST concepts",
+        "Cisco automation with structured output",
+        "Idempotent configuration",
+        "Config templating",
+        "Git-based change workflow",
+        "Validation and rollback automation",
+        "Inventory-driven automation"
+      ],
+      "platforms": [
+        "Cisco IOS/IOS-XE",
+        "MikroTik RouterOS",
+        "Linux",
+        "Windows Server",
+        "EVE-NG/GNS3"
+      ],
+      "labModes": [
+        "Guided",
+        "Fault Injection",
+        "Evidence Challenge",
+        "Capstone"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "Incident Response & Digital Forensics",
+      "levels": [
+        75
+      ],
+      "topics": [
+        "Incident triage and scope",
+        "Evidence collection order",
+        "Packet capture during incident",
+        "Timeline construction",
+        "Configuration diff analysis",
+        "DNS incident investigation",
+        "Authentication incident investigation",
+        "Lateral movement indicators",
+        "Containment vs eradication",
+        "Post-incident RCA and lessons learned"
+      ],
+      "platforms": [
+        "Cisco IOS/IOS-XE",
+        "MikroTik RouterOS",
+        "Linux",
+        "Windows Server",
+        "EVE-NG/GNS3"
+      ],
+      "labModes": [
+        "Guided",
+        "Fault Injection",
+        "Evidence Challenge",
+        "Capstone"
+      ]
+    },
+    {
+      "id": 11,
+      "name": "Enterprise Architecture & Capstone",
+      "levels": [
+        76
+      ],
+      "topics": [
+        "Requirements to architecture",
+        "IPAM and address planning",
+        "Campus network design",
+        "Data-center network design",
+        "Branch/WAN design",
+        "High availability patterns",
+        "Capacity planning",
+        "Migration and maintenance windows",
+        "Network documentation as code",
+        "Enterprise capstone review"
+      ],
+      "platforms": [
+        "Cisco IOS/IOS-XE",
+        "MikroTik RouterOS",
+        "Linux",
+        "Windows Server",
+        "EVE-NG/GNS3"
+      ],
+      "labModes": [
+        "Guided",
+        "Fault Injection",
+        "Evidence Challenge",
+        "Capstone"
+      ]
+    },
+    {
+      "id": 12,
+      "name": "AI for Network Engineering & AIOps",
+      "levels": [
+        77
+      ],
+      "topics": [
+        "AI assistant architecture",
+        "RAG for network knowledge",
+        "Embedding and retrieval quality",
+        "Grounded troubleshooting",
+        "AI command safety",
+        "Structured telemetry for AI",
+        "AIOps anomaly detection",
+        "AI-assisted PCAP analysis",
+        "Agent tool calling and approvals",
+        "Private/local AI capstone"
+      ],
+      "platforms": [
+        "Cisco IOS/IOS-XE",
+        "MikroTik RouterOS",
+        "Linux",
+        "Windows Server",
+        "EVE-NG/GNS3"
+      ],
+      "labModes": [
+        "Guided",
+        "Fault Injection",
+        "Evidence Challenge",
+        "Capstone"
+      ]
+    }
+  ],
+  "integration": {
+    "centralSearch": [
+      "Lessons",
+      "Deep Lessons",
+      "Scenarios",
+      "Notes",
+      "Incidents",
+      "Configs",
+      "PCAP Captures"
+    ],
+    "rag": [
+      "chunking",
+      "keyword retrieval",
+      "embedding retrieval",
+      "grounded context",
+      "source attribution"
+    ],
+    "aiModes": [
+      "Teacher",
+      "Socratic",
+      "Troubleshooter",
+      "Examiner",
+      "Lab Coach",
+      "Config Reviewer",
+      "Autonomous Coach"
+    ],
+    "safety": [
+      "human approval before production change",
+      "no secrets in prompts",
+      "audit trail",
+      "model/version tracking",
+      "data minimization"
+    ]
+  },
+  "mastery": [
+    "UNKNOWN",
+    "REVIEW",
+    "KNOWN",
+    "MASTERED"
+  ],
+  "recommendedJourney": [
+    "Foundation levels 1-24",
+    "Professional engineering 25-50",
+    "AI & automation 51-65",
+    "Field engineering 66-77",
+    "Deep Engineering 32 tracks",
+    "Break/Fix 160 scenarios",
+    "Enterprise capstone"
+  ]
+}

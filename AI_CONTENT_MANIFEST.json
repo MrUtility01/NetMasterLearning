@@ -1,0 +1,65 @@
+{
+  "productVersion": "11.0.0",
+  "ai": {
+    "modes": [
+      "TEACHER",
+      "SOCRATIC",
+      "TROUBLESHOOTER",
+      "EXAMINER",
+      "LAB_COACH",
+      "CONFIG_REVIEWER",
+      "AUTONOMOUS_COACH",
+      "EVIDENCE_ANALYST",
+      "INCIDENT_COMMANDER"
+    ],
+    "grounding": "RAG + metadata + evidence chain",
+    "safety": "human approval before real-device changes"
+  },
+  "retrieval": {
+    "pipeline": [
+      "query normalization",
+      "synonym/alias expansion",
+      "lexical BM25-like scoring",
+      "hashed vector similarity",
+      "metadata filtering",
+      "MMR diversity",
+      "source grounding",
+      "citation-ready context"
+    ],
+    "indexedSources": [
+      "770 expert lessons",
+      "deep engineering",
+      "scenarios",
+      "labs",
+      "AI playbooks",
+      "future user notes/incidents/configs/PCAPs"
+    ]
+  },
+  "localLlmAdapters": [
+    "Ollama",
+    "OpenAI-compatible local endpoints"
+  ],
+  "futureAdapters": [
+    "llama.cpp",
+    "vLLM",
+    "remote enterprise endpoint"
+  ],
+  "searchSources": [
+    "curriculum",
+    "deep",
+    "scenarios",
+    "labs",
+    "AI",
+    "notes",
+    "incidents",
+    "configs",
+    "captures",
+    "evidence-chain",
+    "causal-graph",
+    "dependency-graph",
+    "failure-catalog",
+    "engineering-passport"
+  ],
+  "expertDepth": "Concept→Architecture→Internals→State/Packet→Configuration→Verification→Failure→Lab→Incident→Production→Mastery",
+  "intelligenceLayer": "Engineering Evidence Chain + Causal Reasoning + Dependency Blast Radius + Controlled Failure Injection"
+}

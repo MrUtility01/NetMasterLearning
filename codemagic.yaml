@@ -1,0 +1,38 @@
+workflows:
+  android-debug:
+    name: NetMaster Android Debug
+    instance_type: linux_x2
+    max_build_duration: 30
+    environment:
+      java: 17
+    scripts:
+      - name: Prepare Android SDK
+        script: |
+          yes | sdkmanager --licenses >/dev/null || true
+          sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+      - name: Validate content
+        script: ./scripts/validate-project.sh
+      - name: Build debug APK
+        script: ./gradlew assembleDebug --no-daemon
+    artifacts:
+      - app/build/outputs/apk/debug/*.apk
+
+  android-release:
+    name: NetMaster Android Release
+    instance_type: linux_x2
+    max_build_duration: 30
+    environment:
+      java: 17
+    scripts:
+      - name: Prepare Android SDK
+        script: |
+          yes | sdkmanager --licenses >/dev/null || true
+          sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+      - name: Validate content
+        script: ./scripts/validate-project.sh
+      - name: Build release artifacts
+        script: ./gradlew assembleRelease bundleRelease --no-daemon
+    artifacts:
+      - app/build/outputs/apk/release/*.apk
+      - app/build/outputs/bundle/release/*.aab
+      - app/build/test-results/**

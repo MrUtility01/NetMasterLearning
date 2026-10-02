@@ -1,0 +1,373 @@
+{
+  "version": "7.0.0",
+  "language": "fa-IR",
+  "depth": "AUTHORED-DEEP-1",
+  "description": "محتوای عمیق نویسندگی‌شده برای درک مفهومی و مهندسی شبکه؛ بدون متن‌های قالبی تکرارشونده.",
+  "topics": [
+    {
+      "id": "D001",
+      "title": "مدل OSI و Encapsulation",
+      "domain": "Foundations",
+      "level": "Foundation",
+      "why_it_matters": "OSI فقط حفظ‌کردن هفت نام نیست؛ ابزار تفکیک مسئولیت، محل خرابی و نوع داده است. در عیب‌یابی باید بتوانی یک جریان را از application تا bits و برعکس دنبال کنی.",
+      "mental_model": "یک درخواست HTTP را تصور کن: برنامه داده می‌سازد؛ TCP آن را به segment تبدیل می‌کند؛ IP packet می‌سازد؛ Ethernet frame می‌سازد؛ NIC آن را به bits تبدیل می‌کند. در مقصد همین مسیر معکوس می‌شود. هر لایه فقط header/metadata لازم خودش را اضافه یا حذف می‌کند.",
+      "internals": "Encapsulation ترتیب ساده «داده→segment→packet→frame→bits» نیست؛ بعضی پروتکل‌ها مثل ARP مستقیماً روی L2 هستند و DNS روی UDP/TCP حمل می‌شود. باید تفاوت service، protocol و PDU را بفهمی. Port متعلق به transport است؛ IP متعلق به network؛ MAC متعلق به link.",
+      "packet_state_walkthrough": "برای یک HTTP روی TCP: Ethernet src/dst MAC مربوط به hop فعلی است، IP src/dst معمولاً end-to-end باقی می‌ماند مگر NAT، TCP ports/flags end-to-end هستند، و payload در هر روتر عموماً دست‌نخورده می‌ماند. در هر hop فقط L2 header عوض می‌شود.",
+      "configuration_and_commands": "Cisco: show interfaces, show ip route, show arp. MikroTik: /ip address print, /ip route print, /ip arp print. Linux: ip addr; ip route; ip neigh; ss -nt. Windows: ipconfig /all; route print; arp -a; Get-NetTCPConnection.",
+      "verification": "با Wireshark یک TCP SYN را پیدا کن و Ethernet/IP/TCP را جداگانه باز کن. سپس همان اتصال را در hop بعدی capture کن و MAC را با IP مقایسه کن. انتظار: MAC می‌تواند عوض شود، IP مقصد برای ترافیک routed ثابت می‌ماند مگر NAT.",
+      "failure_analysis": "اگر ping کار می‌کند ولی HTTP نه، مشکل را «Layer 7» فرض نکن؛ ممکن است TCP port، firewall، MTU، DNS یا return path مشکل داشته باشد. اگر ARP شکست بخورد، قبل از route دنبال L2/VLAN بگرد. اگر MAC مقصد در capture gateway است، host برای مقصد remote در حال ارسال به next-hop است، نه MAC سرور remote.",
+      "lab": "Lab: دو subnet بساز؛ بینشان router قرار بده. از Client به Web Server درخواست TCP بفرست. در Client، router ingress، router egress و Server capture بگیر. برای هر capture یک جدول بساز: src/dst MAC, src/dst IP, src/dst port, TTL, TCP flags. سپس VLAN یا route را خراب کن و محل اولین divergence را پیدا کن.",
+      "questions": [
+        "چرا MAC مقصد برای یک سرور خارج از subnet معمولاً MAC gateway است؟",
+        "در یک packet routed کدام فیلدها hop-by-hop و کدام end-to-end هستند؟",
+        "چرا تغییر MTU می‌تواند TCP را خراب کند ولی بعضی pingها هنوز موفق باشند؟",
+        "چگونه از روی SYN/SYN-ACK/ACK تشخیص می‌دهی که مشکل قبل یا بعد از TCP handshake است؟"
+      ],
+      "misconceptions": [
+        "OSI هفت «دستگاه» نیست؛ یک مدل مرجع است.",
+        "TCP/IP دقیقاً یک کپی چهارلایه‌ای از OSI نیست.",
+        "هر چیزی که داخل packet است الزاماً متعلق به network layer نیست."
+      ]
+    },
+    {
+      "id": "D002",
+      "title": "Ethernet Frame و MAC Learning",
+      "domain": "Ethernet",
+      "level": "Foundation",
+      "why_it_matters": "سوئیچ برای تصمیم forwarding به MAC table وابسته است. اگر source learning، destination lookup، VLAN membership و aging را نفهمی، مشکلات L2 شبیه جادو به نظر می‌رسند.",
+      "mental_model": "هر frame هنگام ورود یک port و VLAN context دارد. سوئیچ source MAC را روی همان ingress ثبت می‌کند. سپس destination MAC را در همان VLAN جست‌وجو می‌کند؛ اگر known باشد unicast می‌کند، اگر unknown باشد در همان VLAN flood می‌کند، و broadcast/multicast مطابق سیاست VLAN پخش می‌شود.",
+      "internals": "CAM/MAC table معمولاً tupleای شبیه VLAN+MAC→port نگه می‌دارد. Aging باعث حذف entryهای قدیمی می‌شود. اگر یک MAC بین دو port حرکت کند، MAC move رخ می‌دهد. Loop می‌تواند باعث MAC flapping و broadcast storm شود.",
+      "packet_state_walkthrough": "جریان را در سطح PDU/state دنبال کن: ورودی → تصمیم → خروجی → return path؛ برای اثبات هر مرحله capture، counter یا log مناسب جمع کن.",
+      "configuration_and_commands": "Cisco: show mac address-table dynamic; show mac address-table address <mac>; show interfaces counters errors. MikroTik bridge: /interface bridge host print; /interface bridge port print; /interface bridge settings print. Linux bridge: bridge fdb show.",
+      "verification": "یک frame را capture کن و source/destination MAC و EtherType را بخوان. روی switch جدول MAC را قبل و بعد از ارسال ببین. برای unknown unicast باید flood در همان broadcast domain مشاهده شود؛ برای known unicast فقط egress صحیح باید frame را بگیرد.",
+      "failure_analysis": "اگر دو host در یک VLAN همدیگر را نمی‌بینند: ابتدا link، سپس VLAN membership، سپس MAC learning و سپس host firewall را بررسی کن. MAC flapping بین دو port نشانه‌ای از loop، teaming اشتباه، bridge loop یا duplicate MAC است.",
+      "lab": "Lab: سه سوئیچ را با یک loop فیزیکی/مجازی بساز؛ STP را فعال کن. یک‌بار STP را غیرفعال کن و counters/MAC table را مشاهده کن. سپس STP را برگردان و تفاوت topology و broadcast behavior را ثبت کن.",
+      "questions": [
+        "چرا unknown unicast باید flood شود؟",
+        "MAC table چرا per-VLAN معنی پیدا می‌کند؟",
+        "MAC flapping چه evidenceهایی دارد؟",
+        "اگر MAC table صحیح است ولی ارتباط نیست، چه چیزهایی بعد از L2 lookup باید بررسی شوند؟"
+      ],
+      "misconceptions": [
+        "MAC address به‌تنهایی broadcast domain را مشخص نمی‌کند؛ VLAN context مهم است.",
+        "سوئیچ همیشه frame را به یک port واحد نمی‌فرستد؛ unknown/broadcast رفتار متفاوت دارد."
+      ]
+    },
+    {
+      "id": "D003",
+      "title": "ARP و ارتباط IP با Ethernet",
+      "domain": "IPv4/L2",
+      "level": "Foundation",
+      "why_it_matters": "ARP نقطه اتصال L3 و L2 در IPv4 است: host باید برای next-hop یک IPv4 را به MAC تبدیل کند. بسیاری از خطاهای «ping نمی‌شود» در همین مرز رخ می‌دهند.",
+      "mental_model": "Host ابتدا routing decision می‌گیرد: مقصد local است یا remote؟ اگر local باشد ARP برای خود مقصد انجام می‌شود؛ اگر remote باشد ARP برای default gateway. بعد frame با MAC به‌دست‌آمده ساخته می‌شود.",
+      "internals": "ARP Request معمولاً Ethernet broadcast است و Target IP را می‌پرسد؛ Reply معمولاً unicast است. Gratuitous ARP برای اعلام/بررسی mapping استفاده می‌شود. ARP cache timeout و state آن مهم است؛ stale entry می‌تواند رفتار متناوب بسازد.",
+      "packet_state_walkthrough": "جریان را در سطح PDU/state دنبال کن: ورودی → تصمیم → خروجی → return path؛ برای اثبات هر مرحله capture، counter یا log مناسب جمع کن.",
+      "configuration_and_commands": "Linux: ip neigh show; ip neigh flush all. Windows: arp -a; arp -d *. Cisco: show ip arp. MikroTik: /ip arp print; /ip arp remove [find]. برای تست از arping در Linux استفاده کن.",
+      "verification": "Capture بگیر و sequence را ببین: ARP who-has → is-at → سپس ICMP Echo. اگر ARP Request بیرون می‌رود ولی Reply نمی‌آید، قبل از بررسی ICMP دنبال VLAN، subnet mask، L2 isolation و endpoint firewall بگرد.",
+      "failure_analysis": "Proxy ARP، duplicate IP، stale ARP و ARP suppression در تجهیزات/شبکه‌های مجازی می‌توانند تشخیص را پیچیده کنند. اگر ARP برای gateway حل نمی‌شود، route جدول به‌تنهایی کافی نیست؛ next-hop باید در L2 قابل دسترسی باشد.",
+      "lab": "Lab: دو host در یک subnet و یک router بساز. ARP cache را پاک کن، ping بزن و capture بگیر. سپس subnet mask یکی از hostها را اشتباه کن؛ بررسی کن چرا host ممکن است برای مقصد remote رفتار متفاوتی نشان دهد.",
+      "questions": [
+        "چرا host برای مقصد remote MAC خود سرور را ARP نمی‌کند؟",
+        "ARP در کدام لایه OSI قرار می‌گیرد و چرا این پاسخ ساده نیست؟",
+        "تفاوت stale ARP و duplicate IP در capture چیست؟",
+        "Proxy ARP چه چیزی را پنهان می‌کند؟"
+      ],
+      "misconceptions": [
+        "ARP route را انتخاب نمی‌کند؛ routing decision قبل از resolution انجام می‌شود.",
+        "ARP برای IPv4 است؛ IPv6 از NDP استفاده می‌کند."
+      ]
+    },
+    {
+      "id": "D004",
+      "title": "IPv4 Addressing و Subnetting",
+      "domain": "IPv4",
+      "level": "Foundation",
+      "why_it_matters": "آدرس IP فقط یک عدد نیست؛ network prefix تعیین می‌کند host برای مقصد local frame را مستقیم بفرستد یا به router تحویل دهد. Subnetting پایه طراحی و troubleshooting است.",
+      "mental_model": "IPv4 32 بیت است. Prefix length تعداد بیت‌های network را مشخص می‌کند. برای /24 سه octet اول network و 8 بیت آخر host هستند؛ اما /27 یعنی block size=32 و چهار subnet در /24 ایجاد می‌شود.",
+      "internals": "برای تصمیم local/remote، host آدرس مقصد را با subnet mask AND می‌کند و با network خودش مقایسه می‌کند. اشتباه mask می‌تواند باعث ARP برای مقصدی شود که باید routed باشد یا برعکس.",
+      "packet_state_walkthrough": "جریان را در سطح PDU/state دنبال کن: ورودی → تصمیم → خروجی → return path؛ برای اثبات هر مرحله capture، counter یا log مناسب جمع کن.",
+      "configuration_and_commands": "Linux: ipcalc <ip>/<prefix>; ip route. Windows: ipconfig /all. Cisco: show ip interface brief; show ip route. MikroTik: /ip address print; /ip route print. برای طراحی، همیشه network, usable range, broadcast و gateway را محاسبه کن.",
+      "verification": "برای 192.168.10.0/27: block size=32؛ subnetها .0, .32, .64, .96, ... هستند. در subnet اول network=.0، usable=.1-.30، broadcast=.31. این محاسبه را بدون calculator تمرین کن.",
+      "failure_analysis": "خطای رایج: IP درست ولی mask غلط. symptom می‌تواند این باشد که بعضی مقصدهای داخل /24 کار می‌کنند و بعضی نه، یا host به‌جای gateway مستقیماً ARP می‌کند. همچنین overlap بین subnetها در router باعث route ambiguity می‌شود.",
+      "lab": "Lab: یک /24 را به Users=/26، Servers=/27، VoIP=/28 و Management=/29 تقسیم کن. gatewayها را تعیین کن. سپس یک mask را عمداً اشتباه کن و با ARP table و route table توضیح بده چرا failure رخ داده.",
+      "questions": [
+        "برای /27 چند آدرس و چند host usable داریم و چرا؟",
+        "چطور تشخیص می‌دهی یک مقصد local است؟",
+        "چرا subnet overlap طراحی خطرناکی است؟",
+        "اگر ping به gateway موفق است ولی سرور remote نه، mask چه نقشی می‌تواند داشته باشد؟"
+      ],
+      "misconceptions": [
+        "Network address و first usable یکی نیستند.",
+        "/24 همیشه به معنی 254 host نیست؛ context و reserved addresses مهم‌اند."
+      ]
+    },
+    {
+      "id": "D005",
+      "title": "ICMP، Ping و Traceroute",
+      "domain": "Diagnostics",
+      "level": "Foundation",
+      "why_it_matters": "ICMP ابزار کنترل و خطای IP است. Ping فقط «وصل بودن» را نشان نمی‌دهد؛ باید type/code، TTL و timing را بفهمی. Traceroute هم مسیر را از رفتار TTL و ICMP استخراج می‌کند.",
+      "mental_model": "Ping معمولاً Echo Request/Reply است. هر router TTL را کم می‌کند. وقتی TTL به صفر برسد، router پیام Time Exceeded می‌فرستد. Traceroute با TTLهای افزایشی همین رفتار را exploit می‌کند.",
+      "internals": "در IPv4 ICMP بخشی از IP payload است و port ندارد. بنابراین tracerouteهای UDP، ICMP و TCP ممکن است رفتار متفاوتی داشته باشند. فایروال می‌تواند ICMP را filter کند و در نتیجه «عدم پاسخ» لزوماً به معنی عدم مسیر نیست.",
+      "packet_state_walkthrough": "جریان را در سطح PDU/state دنبال کن: ورودی → تصمیم → خروجی → return path؛ برای اثبات هر مرحله capture، counter یا log مناسب جمع کن.",
+      "configuration_and_commands": "Linux: ping -c 4; traceroute -n; tracepath. Windows: ping; tracert; pathping. Cisco: ping; traceroute. MikroTik: /ping <ip>; /tool traceroute <ip>. در capture نوع ICMP و code را بررسی کن.",
+      "verification": "برای هر hop، source IP پیام Time Exceeded را ثبت کن. اگر یک hop * می‌دهد ولی hop بعدی و مقصد پاسخ می‌دهند، احتمالاً فقط ICMP response rate-limit/filter شده است. اگر از آن نقطه به بعد همه * هستند، باید مسیر/ACL/return path را بررسی کرد.",
+      "failure_analysis": "PMTUD به ICMP وابسته است؛ block کردن پیام‌های لازم می‌تواند black-hole ایجاد کند. Redirect، Destination Unreachable و Time Exceeded هرکدام معنای متفاوت دارند.",
+      "lab": "Lab: مسیر چند-hop بساز. traceroute را با ICMP و TCP مقایسه کن. سپس ICMP Time Exceeded را محدود کن و ببین چرا traceroute ناقص می‌شود در حالی که application هنوز ممکن است کار کند.",
+      "questions": [
+        "چرا traceroute الزاماً مسیر دقیق application را نشان نمی‌دهد؟",
+        "تفاوت Echo Reply و Destination Unreachable چیست؟",
+        "چرا * در traceroute الزاماً خرابی نیست؟",
+        "PMTUD چگونه با ICMP ارتباط دارد؟"
+      ],
+      "misconceptions": [
+        "Ping موفق یعنی فقط Echo موفق شده؛ سرویس TCP را اثبات نمی‌کند.",
+        "Traceroute جدول routing را مستقیماً نمایش نمی‌دهد؛ از پاسخ‌های میانی inference می‌کند."
+      ]
+    },
+    {
+      "id": "D006",
+      "title": "TCP از SYN تا FIN/RST",
+      "domain": "Transport",
+      "level": "Intermediate",
+      "why_it_matters": "TCP یک byte-stream قابل اعتماد و stateful است. برای فهم timeout، retransmission، half-open connection، reset و performance باید sequence/ack/window/state را ببینی.",
+      "mental_model": "در handshake: SYN client با ISN می‌آید؛ SYN-ACK server هم ISN خودش و ACK برای client می‌دهد؛ ACK نهایی connection را established می‌کند. Sequence number به byte position مربوط است، نه packet number.",
+      "internals": "هر segment دارای seq/ack، flags، window و options است. MSS از MTU/headers مشتق می‌شود. Window و SACK روی throughput و recovery اثر دارند. FIN پایان منظم جهت یک stream است؛ RST abort ناگهانی state است.",
+      "packet_state_walkthrough": "جریان را در سطح PDU/state دنبال کن: ورودی → تصمیم → خروجی → return path؛ برای اثبات هر مرحله capture، counter یا log مناسب جمع کن.",
+      "configuration_and_commands": "Linux: ss -tin; tcpdump -nn -i any tcp port 443. Windows: Get-NetTCPConnection; pktmon. Cisco/MikroTik: connection tracking و counters را برای policy بررسی کن. برای تست: curl -v و nc/telnet به port مشخص.",
+      "verification": "Capture را با فیلتر tcp.stream دنبال کن. ترتیب SYN→SYN/ACK→ACK را ببین. اگر SYN retransmit می‌شود و هیچ SYN-ACK نیست، server unreachable، firewall drop یا return path محتمل است. اگر RST سریع می‌آید، یک endpoint یا middlebox connection را reject کرده است.",
+      "failure_analysis": "Dropped SYN، asymmetric routing، stateful firewall timeout، MSS/MTU، zero window و packet loss هرکدام signature متفاوت دارند. TCP retransmission به‌تنهایی root cause نیست؛ symptom است.",
+      "lab": "Lab: یک web server راه‌اندازی کن. یک بار port را listen کن، یک بار firewall را DROP و یک بار REJECT کن. capture هر سه حالت را مقایسه کن و تفاوت timeout و RST را توضیح بده.",
+      "questions": [
+        "چرا RST با DROP فرق دارد؟",
+        "SYN retransmission چه چیزهایی را اثبات نمی‌کند؟",
+        "MSS چه ارتباطی با MTU دارد؟",
+        "Zero Window چه چیزی درباره receiver می‌گوید؟"
+      ],
+      "misconceptions": [
+        "TCP packet برابر با application message نیست؛ TCP stream است.",
+        "ACK number معمولاً next byte expected را نشان می‌دهد."
+      ]
+    },
+    {
+      "id": "D007",
+      "title": "UDP و تفاوت آن با TCP",
+      "domain": "Transport",
+      "level": "Intermediate",
+      "why_it_matters": "UDP state reliability را در خود protocol تحمیل نمی‌کند؛ بنابراین DNS، DHCP، VoIP و بسیاری از telemetryها روی آن سوار می‌شوند و reliability را در application یا طراحی شبکه حل می‌کنند.",
+      "mental_model": "UDP header شامل source/destination port، length و checksum است. هیچ handshake، sequence یا retransmission ذاتی ندارد. هر datagram مرز پیام خود را حفظ می‌کند، برخلاف TCP stream.",
+      "internals": "DNS query ممکن است UDP/53 باشد و در شرایط خاص TCP/53. DHCP در IPv4 از broadcast و پورت‌های 67/68 استفاده می‌کند. VoIP/RTP معمولاً UDP را برای latency پایین ترجیح می‌دهد.",
+      "packet_state_walkthrough": "جریان را در سطح PDU/state دنبال کن: ورودی → تصمیم → خروجی → return path؛ برای اثبات هر مرحله capture، counter یا log مناسب جمع کن.",
+      "configuration_and_commands": "Linux: ss -uap; tcpdump -nn udp. Windows: Get-NetUDPEndpoint. Cisco/MikroTik: firewall/connection tracking و counters. برای DNS از dig +tcp و بدون +tcp مقایسه کن.",
+      "verification": "در capture به 5-tuple و datagram size نگاه کن. نبود response می‌تواند packet loss، firewall، server application یا return path باشد؛ چون UDP handshake ندارد، باید evidence دیگری پیدا کنی.",
+      "failure_analysis": "UDP fragmentation، NAT timeout، asymmetric filtering و application-level retry از خطاهای مهم‌اند. برای VoIP packet loss و jitter از latency ساده مهم‌ترند.",
+      "lab": "Lab: DNS را با UDP و TCP تست کن. سپس UDP را در firewall drop کن و رفتار client را مشاهده کن. یک سناریوی RTP بساز و packet loss مصنوعی ایجاد کن.",
+      "questions": [
+        "چرا DNS گاهی TCP می‌شود؟",
+        "UDP چگونه بدون handshake کار می‌کند؟",
+        "چرا packet loss برای VoIP شدیدتر از کمی latency است؟",
+        "در UDP نبود response را چگونه isolate می‌کنی؟"
+      ],
+      "misconceptions": [
+        "UDP «بدون connection» به معنی بدون state در firewall نیست.",
+        "UDP الزاماً سریع‌تر نیست؛ overhead کمتر و semantics متفاوت دارد."
+      ]
+    },
+    {
+      "id": "D008",
+      "title": "DNS Resolution از Client تا Authoritative",
+      "domain": "DNS",
+      "level": "Intermediate",
+      "why_it_matters": "DNS نام را به اطلاعاتی مثل A/AAAA/CNAME/MX تبدیل می‌کند. عیب‌یابی DNS باید cache، recursion، delegation، authoritative data و transport را جدا کند.",
+      "mental_model": "Client معمولاً به recursive resolver می‌پرسد. Resolver اگر cache نداشته باشد از root به TLD و authoritative server می‌رود. TTL تعیین می‌کند نتیجه چقدر در cache بماند.",
+      "internals": "Query/Response شامل transaction ID، flags، question، answer، authority و additional است. NXDOMAIN با SERVFAIL فرق دارد. CNAME ممکن است chain ایجاد کند. EDNS و DNSSEC می‌توانند اندازه و رفتار query را تغییر دهند.",
+      "packet_state_walkthrough": "جریان را در سطح PDU/state دنبال کن: ورودی → تصمیم → خروجی → return path؛ برای اثبات هر مرحله capture، counter یا log مناسب جمع کن.",
+      "configuration_and_commands": "Linux: resolvectl status; dig example.com A; dig +trace example.com. Windows: Resolve-DnsName; ipconfig /displaydns. MikroTik: /ip dns print; /ip dns cache print.",
+      "verification": "اول query مستقیم به resolver محلی، سپس resolver عمومی/authoritative را مقایسه کن. با +trace delegation را ببین. در capture پورت 53 و در صورت نیاز DoT/DoH را در نظر بگیر.",
+      "failure_analysis": "Cached stale data، split-horizon، wrong search suffix، blocked UDP/53، DNSSEC validation failure و incorrect delegation از failureهای مهم‌اند. اگر ping با IP کار می‌کند ولی نام نه، لزوماً مشکل network path نیست.",
+      "lab": "Lab: یک zone داخلی بساز؛ A و CNAME ایجاد کن. TTL را تغییر بده. سپس رکورد را تغییر بده و تفاوت cache قدیمی و authoritative response را مشاهده کن.",
+      "questions": [
+        "فرق recursive و authoritative چیست؟",
+        "NXDOMAIN و SERVFAIL چه معنایی دارند؟",
+        "TTL دقیقاً چه چیزی را کنترل می‌کند؟",
+        "چطور ثابت می‌کنی مشکل DNS است نه application؟"
+      ],
+      "misconceptions": [
+        "DNS فقط «تبدیل نام به IP» نیست؛ انواع رکورد و delegation مهم‌اند.",
+        "8.8.8.8 را authoritative server فرض نکن."
+      ]
+    },
+    {
+      "id": "D009",
+      "title": "DHCP DORA و Relay",
+      "domain": "Infrastructure Services",
+      "level": "Intermediate",
+      "why_it_matters": "DHCP برای endpointهای زیاد حیاتی است. فهم DORA و relay باعث می‌شود DHCP را از «یک سرویس ساده» به یک state machine قابل مشاهده تبدیل کنی.",
+      "mental_model": "Client ابتدا DHCPDISCOVER می‌فرستد؛ server یا relay آن را به OFFER تبدیل/عبور می‌دهد؛ client REQUEST انتخاب خود را اعلام می‌کند؛ server ACK lease را تأیید می‌کند. در subnet دیگر DHCP relay پیام را به server می‌رساند.",
+      "internals": "Broadcast source 0.0.0.0/68 به destination 255.255.255.255/67 در مراحل اولیه رایج است. giaddr و relay information option برای تعیین scope مهم‌اند. Lease، T1/T2 و renewal state باید فهمیده شوند.",
+      "packet_state_walkthrough": "جریان را در سطح PDU/state دنبال کن: ورودی → تصمیم → خروجی → return path؛ برای اثبات هر مرحله capture، counter یا log مناسب جمع کن.",
+      "configuration_and_commands": "Linux: nmcli; dhclient; journalctl. Windows: ipconfig /release; ipconfig /renew; Get-DhcpServerv4Lease. MikroTik: /ip dhcp-server print; /ip dhcp-server lease print; /ip dhcp-relay print.",
+      "verification": "Capture روی client VLAN و server side بگیر. اگر Discover روی VLAN دیده می‌شود ولی Offer برنمی‌گردد، server/relay/path را بررسی کن. اگر lease می‌آید ولی gateway/DNS غلط است، مشکل option scope است نه transport.",
+      "failure_analysis": "Wrong VLAN, exhausted pool, duplicate DHCP server, relay misconfiguration، option mismatch و firewall UDP 67/68 از failureهای اصلی‌اند.",
+      "lab": "Lab: دو VLAN با یک DHCP server و relay بساز. سپس relay address، VLAN tagging و pool را یکی‌یکی خراب کن. برای هر failure، اولین packet و آخرین packet مشاهده‌شده را ثبت کن.",
+      "questions": [
+        "چرا DHCPDISCOVER broadcast است؟",
+        "relay چگونه DHCP را از subnet عبور می‌دهد؟",
+        "T1 و T2 چه تفاوتی دارند؟",
+        "اگر IP درست است ولی DNS غلط است، کدام بخش DHCP را بررسی می‌کنی؟"
+      ],
+      "misconceptions": [
+        "DHCP فقط IP نمی‌دهد؛ options بخش مهمی از configuration هستند.",
+        "وجود lease در client به معنی درست بودن gateway و DNS نیست."
+      ]
+    },
+    {
+      "id": "D010",
+      "title": "VLAN، Access و 802.1Q Trunk",
+      "domain": "Switching",
+      "level": "Intermediate",
+      "why_it_matters": "VLAN یک broadcast domain منطقی می‌سازد. تفاوت access و trunk و محل tag شدن frame برای فهم inter-VLAN routing و native VLAN حیاتی است.",
+      "mental_model": "در access port، endpoint معمولاً untagged frame می‌فرستد و switch آن را در یک VLAN قرار می‌دهد. روی trunk، frameهای VLANهای متعدد با 802.1Q tag حمل می‌شوند؛ native VLAN در برخی طراحی‌ها untagged است.",
+      "internals": "802.1Q یک tag چهاربایتی اضافه می‌کند که PCP/DEI و VLAN ID دارد. VLAN ID در طراحی استاندارد 12 بیت است. Tag فقط بین hopهایی که trunk semantics دارند دیده می‌شود؛ endpoint عادی معمولاً آن را نمی‌بیند.",
+      "packet_state_walkthrough": "جریان را در سطح PDU/state دنبال کن: ورودی → تصمیم → خروجی → return path؛ برای اثبات هر مرحله capture، counter یا log مناسب جمع کن.",
+      "configuration_and_commands": "Cisco: show vlan brief; show interfaces trunk; switchport mode access/trunk; switchport access vlan 10. MikroTik: /interface bridge vlan print; /interface bridge port print. Linux: ip -d link; bridge vlan show.",
+      "verification": "از endpoint تا trunk capture بگیر. روی access انتظار frame بدون tag داری؛ روی trunk tag را ببین. VLAN allowed list و native VLAN را دو طرف trunk مقایسه کن.",
+      "failure_analysis": "Native VLAN mismatch، allowed VLAN omission، access port اشتباه، PVID mismatch و VLAN filtering در bridge از failureهای پرتکرارند.",
+      "lab": "Lab: VLANهای 10/20/30 بساز، دو switch را trunk کن، سپس یک VLAN را از allowed list حذف کن. نشان بده چرا فقط همان VLAN قطع می‌شود و VLANهای دیگر سالم می‌مانند.",
+      "questions": [
+        "تفاوت access و trunk دقیقاً چیست؟",
+        "802.1Q tag کجا اضافه و کجا حذف می‌شود؟",
+        "native VLAN چه ریسکی دارد؟",
+        "چرا حذف یک VLAN از trunk فقط همان broadcast domain را قطع می‌کند؟"
+      ],
+      "misconceptions": [
+        "VLAN خودش routing انجام نمی‌دهد.",
+        "Trunk یعنی چند VLAN، نه «هر فریمی با tag»."
+      ]
+    },
+    {
+      "id": "D011",
+      "title": "STP/RSTP و جلوگیری از Loop",
+      "domain": "Switching",
+      "level": "Intermediate",
+      "why_it_matters": "Loop در Ethernet می‌تواند broadcast storm و MAC flapping ایجاد کند. STP topology را با یک root و مسیرهای منطقی بدون loop مدیریت می‌کند.",
+      "mental_model": "Bridge ID از priority و MAC ساخته می‌شود. Root bridge انتخاب می‌شود. هر non-root switch root port دارد؛ هر segment designated port دارد؛ پورت‌های اضافی block/discard می‌شوند. RSTP convergence را با state/roleهای سریع‌تر انجام می‌دهد.",
+      "internals": "BPDUها control-plane traffic هستند. تغییر topology می‌تواند MAC aging/flush و reconvergence ایجاد کند. PortFast فقط برای edge ports مناسب است و باید با BPDU Guard همراه طراحی شود.",
+      "packet_state_walkthrough": "جریان را در سطح PDU/state دنبال کن: ورودی → تصمیم → خروجی → return path؛ برای اثبات هر مرحله capture، counter یا log مناسب جمع کن.",
+      "configuration_and_commands": "Cisco: show spanning-tree; spanning-tree vlan 10 root primary; spanning-tree portfast; spanning-tree bpduguard enable. MikroTik: /interface bridge port print; /interface bridge print. در هر vendor مدل STP را با bridge priority و port cost بررسی کن.",
+      "verification": "Root را عمداً تعیین کن و سپس لینک را قطع کن. زمان convergence، port role و MAC relearning را مشاهده کن. BPDU را capture کن تا بفهمی switchها چگونه topology را می‌سازند.",
+      "failure_analysis": "Unexpected root، BPDU Guard shutdown، loop، misconfigured PortFast، unequal path cost و MST/RSTP interoperability از failureهای مهم‌اند.",
+      "lab": "Lab: سه switch مثلثی بساز. root را تعیین کن، یک لینک را قطع و وصل کن و roleها را ثبت کن. سپس BPDU Guard را روی edge port فعال کن و یک switch را به آن وصل کن.",
+      "questions": [
+        "Root bridge چگونه انتخاب می‌شود؟",
+        "Root port و designated port چه تفاوتی دارند؟",
+        "چرا PortFast روی uplink خطرناک است؟",
+        "MAC flapping چگونه می‌تواند اثر loop باشد؟"
+      ],
+      "misconceptions": [
+        "STP «سرعت شبکه» را زیاد نمی‌کند؛ topology loop-free می‌سازد.",
+        "Blocked port به معنی خراب بودن port نیست."
+      ]
+    },
+    {
+      "id": "D012",
+      "title": "Routing، FIB و Longest Prefix Match",
+      "domain": "Routing",
+      "level": "Intermediate",
+      "why_it_matters": "Router تصمیم می‌گیرد packet را از کدام next-hop/interface خارج کند. تفاوت RIB، FIB و longest-prefix match برای فهم route selection ضروری است.",
+      "mental_model": "Routing table مجموعه routeهاست؛ FIB ساختار forwarding سریع است. هنگام رسیدن packet، مقصد با prefixها مقایسه می‌شود و longest matching prefix انتخاب می‌شود؛ سپس next-hop resolution و L2 encapsulation انجام می‌شود.",
+      "internals": "مثلاً routeهای 10.0.0.0/8 و 10.1.0.0/16 داشته باشی، مقصد 10.1.2.3 با /16 match می‌شود. اگر چند route با prefix برابر باشند، administrative distance/metric/protocol و سپس ECMP می‌توانند وارد تصمیم شوند.",
+      "packet_state_walkthrough": "جریان را در سطح PDU/state دنبال کن: ورودی → تصمیم → خروجی → return path؛ برای اثبات هر مرحله capture، counter یا log مناسب جمع کن.",
+      "configuration_and_commands": "Cisco: show ip route; show ip cef; show ip route <dst>. MikroTik: /ip route print detail; /routing route print. Linux: ip route get <dst>. Windows: Get-NetRoute; route print.",
+      "verification": "یک مقصد مشخص را انتخاب کن و route lookup آن را روی هر router ثبت کن. سپس ARP/ND next-hop و interface خروجی را پیدا کن. در capture باید TTL کم شدن و تغییر L2 را ببینی.",
+      "failure_analysis": "Default route اشتباه، overlapping prefixes، recursive next-hop failure، asymmetric routing و route redistribution خطاهای رایج‌اند. وجود route در RIB تضمین نمی‌کند packet واقعاً forward شود؛ interface/down، ACL و ARP می‌توانند بعداً مانع شوند.",
+      "lab": "Lab: سه router و چهار subnet بساز. یک static route و سپس OSPF اضافه کن. یک /32 host route ایجاد کن و اثر longest prefix match را مشاهده کن.",
+      "questions": [
+        "RIB و FIB چه تفاوتی دارند؟",
+        "Longest prefix match چرا از metric مهم‌تر است؟",
+        "وجود route در table چه چیزهایی را هنوز اثبات نمی‌کند؟",
+        "چرا route asymmetry برای stateful firewall مشکل‌ساز است؟"
+      ],
+      "misconceptions": [
+        "Default route همیشه آخرین «لایه» تصمیم نیست؛ اگر route دقیق‌تر وجود داشته باشد انتخاب نمی‌شود.",
+        "Metric و prefix length دو مفهوم متفاوت‌اند."
+      ]
+    },
+    {
+      "id": "D013",
+      "title": "OSPF Neighbor، LSDB و SPF",
+      "domain": "Routing",
+      "level": "Advanced",
+      "why_it_matters": "OSPF فقط «فعال کردن یک protocol» نیست؛ یک distributed database و state machine است که routers را به همسایه، LSDB و SPF تبدیل می‌کند.",
+      "mental_model": "دو router ابتدا Hello می‌فرستند و پارامترهای سازگار را بررسی می‌کنند. سپس adjacency بر اساس network type شکل می‌گیرد. LSDB اطلاعات topology را نگه می‌دارد و SPF shortest-path tree را می‌سازد.",
+      "internals": "در broadcast network، DR/BDR تعداد adjacencies را کنترل می‌کند. LSA typeهای مختلف اطلاعات متفاوت دارند؛ area boundary و external routes هم semantics متفاوتی دارند. Cost معمولاً وزن path است، نه bandwidth خام به‌تنهایی.",
+      "packet_state_walkthrough": "جریان را در سطح PDU/state دنبال کن: ورودی → تصمیم → خروجی → return path؛ برای اثبات هر مرحله capture، counter یا log مناسب جمع کن.",
+      "configuration_and_commands": "Cisco: show ip ospf neighbor; show ip ospf database; show ip route ospf. MikroTik RouterOS: /routing ospf neighbor print; /routing ospf interface-template print; /routing route print. Linux FRR: vtysh -c \"show ip ospf neighbor\".",
+      "verification": "اگر neighbor Down است، اول interface/link و سپس Hello parameters، area، network type، timers، authentication و MTU را مقایسه کن. اگر neighbor Full است ولی route نیست، LSDB و SPF/route installation را بررسی کن.",
+      "failure_analysis": "2-Way در broadcast network می‌تواند طبیعی باشد؛ MTU mismatch می‌تواند در ExStart/Exchange گیر ایجاد کند. Duplicate Router-ID، passive interface و area mismatch نیز علل رایج‌اند.",
+      "lab": "Lab: سه router با یک transit LAN بساز. DR/BDR را مشاهده کن. سپس MTU را روی یک طرف تغییر بده و state machine را دنبال کن. بعد cost را تغییر بده و route selection را ثبت کن.",
+      "questions": [
+        "چرا Full نبودن neighbor همیشه خطا نیست؟",
+        "LSDB چه چیزی را نگه می‌دارد؟",
+        "چرا MTU mismatch می‌تواند OSPF را در ExStart متوقف کند؟",
+        "تفاوت neighbor problem و route installation problem چیست؟"
+      ],
+      "misconceptions": [
+        "OSPF route table همان LSDB نیست.",
+        "DR/BDR برای broadcast network هستند، نه همه topologyها."
+      ]
+    },
+    {
+      "id": "D014",
+      "title": "NAT، PAT و Connection Tracking",
+      "domain": "Security/NAT",
+      "level": "Advanced",
+      "why_it_matters": "NAT mapping را تغییر می‌دهد و در stateful NAT معمولاً translation به connection state وابسته است. بدون فهم pre/post NAT tuple، troubleshooting بسیار گمراه‌کننده می‌شود.",
+      "mental_model": "در SNAT/PAT، source IP/port قبل از خروج تغییر می‌کند. Router یک mapping و state نگه می‌دارد تا reply را reverse translate کند. DNAT برعکس destination را تغییر می‌دهد. ترتیب NAT نسبت به routing/firewall به vendor وابسته است و باید مستندات همان platform را دید.",
+      "internals": "مثلاً 192.168.1.10:51500 به 203.0.113.20:443 می‌رود؛ بعد از PAT ممکن است 198.51.100.5:40001 دیده شود. Reply به public tuple برمی‌گردد و state آن را به private tuple map می‌کند.",
+      "packet_state_walkthrough": "جریان را در سطح PDU/state دنبال کن: ورودی → تصمیم → خروجی → return path؛ برای اثبات هر مرحله capture، counter یا log مناسب جمع کن.",
+      "configuration_and_commands": "Cisco IOS: show ip nat translations; show ip nat statistics. MikroTik: /ip firewall nat print; /ip firewall connection print. Linux nftables: nft list ruleset; conntrack -L.",
+      "verification": "قبل و بعد NAT را capture کن. روی firewall state و counters را با translation table مقایسه کن. اگر inbound DNAT کار نمی‌کند، public IP/route/NAT rule/order/firewall policy را جداگانه بررسی کن.",
+      "failure_analysis": "Rule order، overlapping NAT، stale conntrack، asymmetric path و hairpin NAT failureهای مهم‌اند. اگر NAT table entry وجود دارد ولی reply نیست، مشکل ممکن است server/default gateway یا return route باشد.",
+      "lab": "Lab: یک private web server و یک public-facing NAT بساز. سپس rule را از ACCEPT به DROP تغییر بده و تفاوت state/NAT table را مشاهده کن. Hairpin access را هم تست کن.",
+      "questions": [
+        "تفاوت SNAT و DNAT چیست؟",
+        "PAT چگونه چند host را با یک public IP عبور می‌دهد؟",
+        "چرا asymmetric routing NAT را خراب می‌کند؟",
+        "وجود translation entry چه چیزی را اثبات نمی‌کند؟"
+      ],
+      "misconceptions": [
+        "NAT همان firewall نیست، هرچند اغلب در یک دستگاه پیاده می‌شوند.",
+        "Private-to-public translation الزاماً route را حذف نمی‌کند؛ هر دو بخش باید درست باشند."
+      ]
+    },
+    {
+      "id": "D015",
+      "title": "Wireshark و روش Evidence-Driven Troubleshooting",
+      "domain": "Observability",
+      "level": "Advanced",
+      "why_it_matters": "Wireshark ابزار «دیدن packet» نیست؛ ابزار آزمون فرضیه است. مهندس باید symptom را به یک فرضیه تبدیل و با capture آن را رد یا تأیید کند.",
+      "mental_model": "از پنج‌تایی src/dst IP/port/protocol شروع کن. سپس handshake، retransmission، DNS timing، ARP، ICMP، TCP flags، window، MSS و application response را بررسی کن. همیشه capture point را در کنار timestamp در نظر بگیر.",
+      "internals": "یک capture فقط همان نقطه و همان زمان را نشان می‌دهد. نبود packet در capture ممکن است drop قبل از capture point یا filter اشتباه باشد. برای اثبات loss بهتر است دو نقطه capture و correlation زمانی داشته باشی.",
+      "packet_state_walkthrough": "جریان را در سطح PDU/state دنبال کن: ورودی → تصمیم → خروجی → return path؛ برای اثبات هر مرحله capture، counter یا log مناسب جمع کن.",
+      "configuration_and_commands": "Filters نمونه: arp; icmp; tcp.flags.syn==1; tcp.stream eq 5; dns; ip.addr==10.0.0.10 && tcp.port==443. از Follow TCP Stream برای context استفاده کن، نه به‌عنوان تنها evidence.",
+      "verification": "برای هر incident یک جدول بساز: Expected event، Observed event، Timestamp، Capture point، Evidence، Hypothesis. سپس فقط یک متغیر را تغییر بده و capture جدید بگیر.",
+      "failure_analysis": "Retransmission می‌تواند نتیجه loss یا reordering باشد. Duplicate ACK می‌تواند نشانه gap باشد ولی به تنهایی root cause نیست. TCP checksum bad ممکن است ناشی از NIC offload باشد و الزاماً corruption روی wire نیست.",
+      "lab": "Lab: سه failure بساز: firewall DROP، DNS wrong answer، MTU black-hole. برای هرکدام بدون نگاه به configuration فقط از capture شروع کن و یک hypothesis tree بساز؛ سپس configuration را برای تأیید باز کن.",
+      "questions": [
+        "چرا محل capture بخشی از evidence است؟",
+        "چطور retransmission را از packet duplication اشتباه نگیریم؟",
+        "چرا checksum bad همیشه خطا نیست؟",
+        "چطور با دو capture point محل drop را محدود می‌کنی؟"
+      ],
+      "misconceptions": [
+        "Packet دیده‌شده در یک interface اثبات نمی‌کند در interface بعدی هم دیده شده.",
+        "Wireshark علت را حدس می‌زند؛ root cause باید با evidence بیرونی تأیید شود."
+      ]
+    }
+  ],
+  "study_contract": {
+    "rule": "هر موضوع باید با why→mental model→internals→packet/state→configuration→verification→failure→lab→questions→misconceptions طی شود.",
+    "mastery": "دانش‌آموز باید بتواند موضوع را توضیح دهد، از روی capture/command evidence استنتاج کند، failure ایجاد کند و root cause را اثبات کند."
+  }
+}
