@@ -10,6 +10,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.netmaster.ai.*
@@ -17,43 +18,146 @@ import com.example.netmaster.data.*
 import com.example.netmaster.domain.*
 
 @Composable
+fun PacketPathPanel(path: PacketPathResult) {
+    SectionCard(
+        path.title,
+        path.summary + if (path.brokenAt != null) " — قطع در: ${path.brokenAt}" else ""
+    ) {
+        Text(
+            "پروتکل‌ها: " + path.protocols.joinToString(" · "),
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.primary
+        )
+        path.hops.forEach { h ->
+            Card(
+                shape = RoundedCornerShape(10.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = if (h.ok)
+                        MaterialTheme.colorScheme.surfaceVariant
+                    else MaterialTheme.colorScheme.errorContainer
+                )
+            ) {
+                Column(Modifier.padding(10.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    Text(
+                        "${h.step}. ${h.deviceName} (${h.deviceType}) — ${h.action}",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 13.sp
+                    )
+                    Text("${h.layer} · ${h.detail}", style = MaterialTheme.typography.bodySmall)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun DeviceListCard(nodes: List<TwinNode>, links: List<TwinLink>) {
+    SectionCard("دیوایس‌های توپولوژی", "${nodes.size} نود · ${links.size} لینک") {
+        nodes.forEach { n ->
+            Text(
+                "• ${n.name}  [${n.type}]  ${n.ip ?: "—"}  ${n.vlan?.let { "VLAN $it" } ?: ""}",
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
+        Spacer(Modifier.height(6.dp))
+        Text("لینک‌ها:", fontWeight = FontWeight.Bold, fontSize = 12.sp)
+        links.forEach { l ->
+            Text(
+                "  ${l.from} → ${l.to}  (${l.protocol}) ${if (l.up) "UP" else "DOWN"}",
+                style = MaterialTheme.typography.labelSmall
+            )
+        }
+    }
+}
+
+@Composable
 fun LabScreen(vm: NetMasterViewModel) {
     val twin = vm.twin.collectAsState().value
     val faults = remember { vm.twinEngine.faults() }
-    LazyColumn(Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    val presets = remember { PacketPathEngine.presets() }
+    val scenarios = remember { PacketPathEngine.scenarios() }
+    var presetId by remember { mutableStateOf("campus") }
+    var scenarioId by remember { mutableStateOf("dns") }
+    val path = remember(twin, scenarioId) { PacketPathEngine.analyze(scenarioId, twin) }
+
+    LazyColumn(
+        Modifier.fillMaxSize().padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
         item {
-            SectionCard("آزمایشگاه دوقلوی دیجیتال", "تزریق خطا + مشاهده توپولوژی") {
-                Text("از اینجا توپولوژی را ببینید، خطا تزریق کنید و شواهد ثبت کنید.")
+            SectionCard("آزمایشگاه دوقلوی دیجیتال", "توپولوژی چنددیوایس + تحلیل بسته hop-by-hop") {
+                Text("توپولوژی را انتخاب کنید، سناریوی بسته را ببینید، خطا تزریق کنید.")
+            }
+        }
+        item {
+            Text("نوع توپولوژی", fontWeight = FontWeight.Bold)
+            Row(
+                Modifier.horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                presets.forEach { p ->
+                    FilterChip(
+                        selected = presetId == p.id,
+                        onClick = {
+                            presetId = p.id
+                            vm.loadTopologyPreset(p.id)
+                        },
+                        label = { Text(p.title, fontSize = 11.sp) }
+                    )
+                }
             }
         }
         item { TopologyGraph(twin.nodes, twin.links) }
+        item { DeviceListCard(twin.nodes, twin.links) }
+        item {
+            Text("تحلیل مسیر بسته", fontWeight = FontWeight.Bold)
+            Row(
+                Modifier.horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                scenarios.forEach { (id, title) ->
+                    FilterChip(
+                        selected = scenarioId == id,
+                        onClick = { scenarioId = id },
+                        label = { Text(title, fontSize = 11.sp) }
+                    )
+                }
+            }
+        }
+        item { PacketPathPanel(path) }
         item {
             ProtocolFlowChart(
                 title = "فلوچارت آزمایش",
-                steps = listOf("پایه", "تزریق خطا", "Capture", "علت ریشه", "رفع", "Rollback")
+                steps = listOf("توپولوژی", "سناریو بسته", "تزریق خطا", "مشاهده hop", "رفع")
             )
         }
         item {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Button({ vm.resetTwin() }, Modifier.weight(1f)) { Text("بازنشانی") }
-                OutlinedButton({ vm.saveSimulatorSnapshot("دستی") }, Modifier.weight(1f)) { Text("عکس‌فوری") }
+                Button({ vm.resetTwin(); presetId = "campus" }, Modifier.weight(1f)) {
+                    Text("بازنشانی")
+                }
+                OutlinedButton({ vm.saveSimulatorSnapshot("دستی") }, Modifier.weight(1f)) {
+                    Text("عکس‌فوری")
+                }
             }
         }
         item {
             SectionCard("وضعیت سرویس‌ها") {
                 twin.simulator?.let { s ->
-                    Text("DNS: ${if (s.dnsHealthy) "سالم" else "خراب"}  |  فایروال: ${if (s.firewallHealthy) "سالم" else "خراب"}")
+                    Text("DNS: ${if (s.dnsHealthy) "سالم" else "خراب"}  |  DHCP: ${if (s.dhcpHealthy) "سالم" else "خراب"}")
+                    Text("فایروال: ${if (s.firewallHealthy) "سالم" else "خراب"}  |  NAT: ${if (s.natHealthy) "سالم" else "خراب"}")
                     Text("OSPF: ${if (s.ospfHealthy) "بالا" else "ضعیف"}  |  BGP: ${if (s.bgpHealthy) "بالا" else "قطع"}")
+                    Text("QoS: ${if (s.qosHealthy) "خوب" else "congested"}  |  STP: ${if (s.stpHealthy) "پایدار" else "ناپایدار"}")
                 } ?: Text("شبیه‌ساز آماده نیست")
             }
         }
-        item { Text("تزریق خطا", fontWeight = androidx.compose.ui.text.font.FontWeight.Bold) }
+        item { Text("تزریق خطا (مسیر بسته عوض می‌شود)", fontWeight = FontWeight.Bold) }
         items(faults, key = { it.id }) { f ->
             Card(onClick = { vm.injectFault(f) }, shape = RoundedCornerShape(12.dp)) {
                 Column(Modifier.padding(12.dp)) {
-                    Text(f.title, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold)
+                    Text(f.title, fontWeight = FontWeight.Bold)
                     BodyText(f.description)
-                    Text("شدت: ${f.severity}", style = MaterialTheme.typography.labelSmall)
+                    Text("شدت: ${f.severity} · هدف: ${f.target}", style = MaterialTheme.typography.labelSmall)
                 }
             }
         }
@@ -73,7 +177,7 @@ fun QuizScreen(vm: NetMasterViewModel, open: (Lesson) -> Unit) {
     LazyColumn(Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
         item {
             SectionCard("موتور آزمون", "تمرین با سؤالات درس‌ها") {
-                Text(l.title, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold)
+                Text(l.title, fontWeight = FontWeight.Bold)
             }
         }
         items(l.quiz) { q ->
@@ -105,7 +209,7 @@ fun NotesScreen(vm: NetMasterViewModel) {
         items(n, key = { it.id }) { x ->
             Card(shape = RoundedCornerShape(12.dp)) {
                 Column(Modifier.padding(12.dp)) {
-                    Text(x.title, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold)
+                    Text(x.title, fontWeight = FontWeight.Bold)
                     BodyText(x.body)
                 }
             }
@@ -119,7 +223,7 @@ fun SearchScreen(vm: NetMasterViewModel, onLesson: (Lesson) -> Unit) {
     val hits = vm.searchResults.collectAsState().value
     LaunchedEffect(q) { if (q.length >= 2) vm.searchAll(q) }
     Column(Modifier.fillMaxSize().padding(16.dp)) {
-        Text("جستجوی سراسری", style = MaterialTheme.typography.headlineSmall, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold)
+        Text("جستجوی سراسری", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
         OutlinedTextField(q, { q = it }, Modifier.fillMaxWidth(), label = { Text("پروتکل، دستور، IP، رخداد…") }, singleLine = true)
         Spacer(Modifier.height(8.dp))
         LazyColumn(verticalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -172,7 +276,9 @@ fun AiScreen(vm: NetMasterViewModel) {
         }
         item {
             OutlinedTextField(prompt, { prompt = it }, Modifier.fillMaxWidth(), minLines = 3, label = { Text("سؤال یا علائم مشکل") })
-            Button({ vm.askAi(mode, prompt) }, enabled = prompt.isNotBlank(), modifier = Modifier.fillMaxWidth()) { Text("تحلیل با هوش مصنوعی") }
+            Button({ vm.askAi(mode, prompt) }, enabled = prompt.isNotBlank(), modifier = Modifier.fillMaxWidth()) {
+                Text("تحلیل با هوش مصنوعی")
+            }
         }
         r?.let {
             item {
@@ -220,7 +326,7 @@ fun OpsScreen(vm: NetMasterViewModel) {
         items(incidents.take(30), key = { it.id }) { i ->
             Card(shape = RoundedCornerShape(12.dp)) {
                 Column(Modifier.padding(12.dp)) {
-                    Text(i.title, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold)
+                    Text(i.title, fontWeight = FontWeight.Bold)
                     Text("وضعیت: ${i.status}  |  شدت: ${i.severity}")
                 }
             }
@@ -233,21 +339,36 @@ fun SimScreen(vm: NetMasterViewModel) {
     val twin = vm.twin.collectAsState().value
     val output = vm.simOutput.collectAsState().value
     var cmd by remember { mutableStateOf("") }
+    var scenarioId by remember { mutableStateOf("http") }
+    val path = remember(twin, scenarioId) { PacketPathEngine.analyze(scenarioId, twin) }
+    val scenarios = remember { PacketPathEngine.scenarios() }
+
     LazyColumn(Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         item {
-            SectionCard("شبیه‌ساز شبکه", "اجرای دستور روی Digital Twin") {
-                Text("توپولوژی زنده و خروجی دستورات")
+            SectionCard("شبیه‌ساز شبکه", "دستور + توپولوژی + مسیر بسته روی دیوایس‌ها") {
+                Text("دستور: show topology | ping | nslookup | tcpdump | disable dns")
             }
         }
         item { TopologyGraph(twin.nodes, twin.links) }
+        item { DeviceListCard(twin.nodes, twin.links) }
         item {
-            ProtocolFlowChart(
-                title = "مسیر دستور در شبیه‌ساز",
-                steps = listOf("ورودی", "پارس", "اعمال روی State", "خروجی")
-            )
+            Text("سناریوی تحلیل بسته", fontWeight = FontWeight.Bold)
+            Row(
+                Modifier.horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                scenarios.forEach { (id, title) ->
+                    FilterChip(
+                        selected = scenarioId == id,
+                        onClick = { scenarioId = id },
+                        label = { Text(title, fontSize = 11.sp) }
+                    )
+                }
+            }
         }
+        item { PacketPathPanel(path) }
         item {
-            OutlinedTextField(cmd, { cmd = it }, Modifier.fillMaxWidth(), label = { Text("دستور (مثلاً show ip route)") })
+            OutlinedTextField(cmd, { cmd = it }, Modifier.fillMaxWidth(), label = { Text("دستور (مثلاً show topology)") })
             Button({ vm.runSimulator(cmd) }, Modifier.fillMaxWidth()) { Text("اجرا") }
         }
         item {
@@ -256,7 +377,9 @@ fun SimScreen(vm: NetMasterViewModel) {
         item {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Button({ vm.resetTwin() }, Modifier.weight(1f)) { Text("بازنشانی") }
-                OutlinedButton({ vm.saveSimulatorSnapshot("شبیه‌ساز") }, Modifier.weight(1f)) { Text("عکس‌فوری") }
+                OutlinedButton({ vm.saveSimulatorSnapshot("شبیه‌ساز") }, Modifier.weight(1f)) {
+                    Text("عکس‌فوری")
+                }
             }
         }
     }
@@ -295,13 +418,20 @@ fun V11Screen(vm: NetMasterViewModel) {
         }
         item {
             SectionCard("پاسپورت مهندسی") {
-                Text(if (passport != null) "امتیاز کلی: ${passport.overall}٪" else "در حال محاسبه…", fontWeight = androidx.compose.ui.text.font.FontWeight.Bold)
+                Text(
+                    if (passport != null) "امتیاز کلی: ${passport.overall}٪" else "در حال محاسبه…",
+                    fontWeight = FontWeight.Bold
+                )
                 passport?.competencies?.forEach { Text("${it.name}: ${it.score}٪") }
             }
         }
-        item { Text("تزریق خطای کنترل‌شده", fontWeight = androidx.compose.ui.text.font.FontWeight.Bold) }
+        item { Text("تزریق خطای کنترل‌شده", fontWeight = FontWeight.Bold) }
         items(faults, key = { it.id }) { f ->
-            Row(Modifier.fillMaxWidth().padding(vertical = 4.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Text(f.title, modifier = Modifier.weight(1f))
                 Button({ vm.injectV11Fault(f.id) }) { Text("تزریق") }
             }
