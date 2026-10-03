@@ -25,8 +25,18 @@ data class SimNetworkState(
         SimRoute("192.168.20.0/24", null, "connected"),
         SimRoute("192.168.30.0/24", null, "connected")
     ),
-    val arp: Map<String, String> = mapOf("192.168.10.1" to "02:10:00:00:00:01", "192.168.20.10" to "02:20:00:00:00:10"),
-    val macTable: Map<String, String> = mapOf("02:10:00:00:00:01" to "Gi1/0/10", "02:20:00:00:00:10" to "Gi1/0/20"),
+    val arp: Map<String, String> = mapOf(
+        "192.168.10.1" to "02:10:00:00:00:01",
+        "192.168.20.10" to "02:20:00:00:00:10",
+        "192.168.20.80" to "02:20:00:00:00:80",
+        "192.168.20.21" to "02:20:00:00:00:21",
+        "192.168.20.22" to "02:20:00:00:00:22"
+    ),
+    val macTable: Map<String, String> = mapOf(
+        "02:10:00:00:00:01" to "Gi1/0/10",
+        "02:20:00:00:00:10" to "Gi1/0/20",
+        "02:20:00:00:00:80" to "Gi1/0/21"
+    ),
     val interfaces: List<SimInterface> = listOf(
         SimInterface("Gi1/0/1", true, null, 1500, listOf("10.0.0.2/30")),
         SimInterface("Gi1/0/10", true, 10, 1500, listOf("192.168.10.1/24")),
@@ -45,29 +55,31 @@ data class SimNetworkState(
 
 class CommandSimulator {
     fun defaultState(): SimNetworkState {
-        // Rich multi-device campus topology (matches PacketPathEngine campus preset)
+        // Default = services topology (TCP/UDP apps: HTTP HTTPS FTP SSH DNS Mail)
         val nodes = listOf(
-            TwinNode("inet", "Internet", "Cloud", "8.8.8.8"),
-            TwinNode("fw", "Firewall", "Firewall", "10.0.0.254"),
-            TwinNode("edge", "Edge Router", "Router", "10.0.0.1"),
-            TwinNode("core", "Core Switch", "Switch"),
-            TwinNode("acc", "Access Switch", "Switch"),
             TwinNode("user", "Client PC", "Host", "192.168.10.50", 10),
-            TwinNode("srv", "App Server", "Server", "192.168.20.20", 20),
+            TwinNode("acc", "Access Switch", "Switch"),
+            TwinNode("core", "Core Switch", "Switch"),
+            TwinNode("edge", "Edge Router", "Router", "10.0.0.1"),
+            TwinNode("fw", "Firewall", "Firewall", "10.0.0.254"),
+            TwinNode("web", "Web Server", "Server", "192.168.20.80", 20),
+            TwinNode("ftp", "FTP Server", "Server", "192.168.20.21", 20),
+            TwinNode("ssh", "SSH Server", "Server", "192.168.20.22", 20),
             TwinNode("dns", "DNS Server", "Server", "192.168.20.10", 20),
-            TwinNode("pbx", "PBX", "VoIP", "192.168.30.10", 30),
-            TwinNode("ap", "WiFi AP", "AP", vlan = 10)
+            TwinNode("mail", "Mail Server", "Server", "192.168.20.25", 20),
+            TwinNode("inet", "Internet", "Cloud", "8.8.8.8")
         )
         val links = listOf(
-            TwinLink("inet", "fw", "WAN"),
-            TwinLink("fw", "edge", "Ethernet"),
-            TwinLink("edge", "core", "802.1Q"),
-            TwinLink("core", "acc", "Trunk"),
-            TwinLink("acc", "user", "Access VLAN10"),
-            TwinLink("acc", "ap", "Access VLAN10"),
-            TwinLink("core", "srv", "VLAN20"),
-            TwinLink("core", "dns", "VLAN20"),
-            TwinLink("core", "pbx", "VLAN30")
+            TwinLink("user", "acc", "Access VLAN10"),
+            TwinLink("acc", "core", "Trunk"),
+            TwinLink("core", "edge", "802.1Q"),
+            TwinLink("edge", "fw", "Ethernet"),
+            TwinLink("fw", "inet", "WAN"),
+            TwinLink("core", "web", "VLAN20 HTTP/S"),
+            TwinLink("core", "ftp", "VLAN20 FTP"),
+            TwinLink("core", "ssh", "VLAN20 SSH"),
+            TwinLink("core", "dns", "VLAN20 DNS"),
+            TwinLink("core", "mail", "VLAN20 SMTP")
         )
         return SimNetworkState(nodes, links)
     }
@@ -78,11 +90,11 @@ class CommandSimulator {
         val l = cmd.lowercase(Locale.ROOT)
         return when {
             l == "show version" || l == "/system resource print" ->
-                result(cmd, "NetMaster Network Simulator v3.2\nCPU: 2 virtual cores\nRAM: 2048 MB\nTopology: multi-device campus", state)
+                result(cmd, "NetMaster Network Simulator v3.3\nTopology: TCP/UDP services (HTTP FTP SSH DNS Mail)", state)
             l == "show vlan" || l == "show vlan brief" ->
                 result(cmd, state.vlans.sorted().joinToString("\n") { "$it\tACTIVE" }, state)
             l == "show interfaces trunk" ->
-                result(cmd, state.links.filter { it.protocol == "802.1Q" || it.protocol == "Trunk" }.joinToString("\n") {
+                result(cmd, state.links.filter { it.protocol.contains("802.1Q") || it.protocol == "Trunk" }.joinToString("\n") {
                     "${it.from}<->${it.to}\tallowed=${state.vlans.sorted().joinToString(",")}"
                 }, state)
             l == "show interfaces status" || l == "/interface print" ->
@@ -102,7 +114,7 @@ class CommandSimulator {
             l == "show ip bgp summary" ->
                 result(cmd, if (state.bgpHealthy) "10.0.0.9\tEstablished\tPrefixes=42" else "10.0.0.9\tActive\tPrefixes=0", state)
             l == "show firewall" || l == "/ip firewall filter print" ->
-                result(cmd, if (state.firewallHealthy) "rules: accept-established,mgmt; forward=stateful" else "rule 0: DROP before established", state)
+                result(cmd, if (state.firewallHealthy) "allow: 22,80,443,21,53,25 established\nforward=stateful" else "rule 0: DROP all", state)
             l == "show nat" || l == "/ip firewall nat print" ->
                 result(cmd, if (state.natHealthy) "srcnat masquerade: active" else "srcnat rule inactive", state)
             l == "show dhcp" || l == "/ip dhcp-server print" ->
@@ -112,13 +124,32 @@ class CommandSimulator {
             l == "show qos" ->
                 result(cmd, if (state.qosHealthy) "VoIP class: priority 1" else "Voice queue: congestion", state)
             l == "show topology" || l == "show nodes" ->
-                result(cmd, state.nodes.joinToString("\n") { "${it.id}\t${it.name}\t${it.type}\t${it.ip ?: "-"}\tvlan=${it.vlan ?: "-"}" } +
-                    "\n---\n" + state.links.joinToString("\n") { "${it.from} -> ${it.to}\t${it.protocol}\t${if (it.up) "UP" else "DOWN"}" }, state)
+                result(
+                    cmd,
+                    state.nodes.joinToString("\n") { "${it.id}\t${it.name}\t${it.type}\t${it.ip ?: "-"}\tvlan=${it.vlan ?: "-"}" } +
+                        "\n---\n" + state.links.joinToString("\n") { "${it.from} -> ${it.to}\t${it.protocol}\t${if (it.up) "UP" else "DOWN"}" },
+                    state
+                )
+            l == "show services" ->
+                result(
+                    cmd,
+                    "HTTP   TCP/80   web  192.168.20.80\nHTTPS  TCP/443  web  192.168.20.80\nFTP    TCP/21   ftp  192.168.20.21\nSSH    TCP/22   ssh  192.168.20.22\nDNS    UDP/53   dns  192.168.20.10\nSMTP   TCP/25   mail 192.168.20.25\nDHCP   UDP/67   edge",
+                    state
+                )
             l.startsWith("ping ") -> ping(state, cmd.substringAfter(' ').trim())
             l.startsWith("traceroute ") || l.startsWith("tracert ") -> trace(state, cmd.substringAfter(' ').trim())
             l.startsWith("nslookup ") || l.startsWith("dig ") -> dns(state, cmd.substringAfter(' ').trim())
             l.startsWith("tcpdump ") || l.startsWith("torch ") ->
-                result(cmd, "SIM-CAPTURE\n1 TCP 192.168.10.50:51522 → 93.184.216.34:443 SYN\n2 TCP 93.184.216.34:443 → 192.168.10.50:51522 SYN,ACK\n3 UDP 192.168.10.50:5353 → 192.168.20.10:53 DNS", state)
+                result(
+                    cmd,
+                    "SIM-CAPTURE\n" +
+                        "1 TCP 192.168.10.50:51522 → 192.168.20.80:443 SYN\n" +
+                        "2 TCP 192.168.20.80:443 → 192.168.10.50:51522 SYN,ACK\n" +
+                        "3 TCP 192.168.10.50:51523 → 192.168.20.22:22 SSH\n" +
+                        "4 TCP 192.168.10.50:51524 → 192.168.20.21:21 FTP\n" +
+                        "5 UDP 192.168.10.50:5353 → 192.168.20.10:53 DNS",
+                    state
+                )
             l == "disable dns" -> mutate(cmd, state.copy(dnsHealthy = false), "DNS disabled")
             l == "enable dns" -> mutate(cmd, state.copy(dnsHealthy = true), "DNS enabled")
             l == "disable firewall" -> mutate(cmd, state.copy(firewallHealthy = false), "Firewall degraded")
@@ -133,7 +164,11 @@ class CommandSimulator {
             l == "enable ospf" -> mutate(cmd, state.copy(ospfHealthy = true), "OSPF OK")
             l == "disable bgp" -> mutate(cmd, state.copy(bgpHealthy = false), "BGP down")
             l == "enable bgp" -> mutate(cmd, state.copy(bgpHealthy = true), "BGP up")
-            else -> result(cmd, "Simulator: try show topology, show vlan, show ip route, show arp, ping, nslookup, tcpdump, disable/enable dns|firewall|nat|dhcp|qos", state, false, false, "error")
+            else -> result(
+                cmd,
+                "Simulator: show topology | show services | show vlan | ping | nslookup | tcpdump | disable/enable dns|firewall|nat|dhcp",
+                state, false, false, "error"
+            )
         }
     }
 
@@ -141,8 +176,8 @@ class CommandSimulator {
         val normalized = target.trim()
         if (!state.firewallHealthy && normalized != "10.0.0.1")
             return result("ping $normalized", "Request timed out.\nSIM cause: firewall", state)
-        if (normalized == "192.168.20.10")
-            return result("ping $normalized", if (state.dnsHealthy) "Reply from $normalized: time<1ms" else "Request timed out (DNS host down)", state)
+        if (normalized in listOf("192.168.20.10", "192.168.20.80", "192.168.20.21", "192.168.20.22", "192.168.20.25"))
+            return result("ping $normalized", if (state.dnsHealthy || normalized != "192.168.20.10") "Reply from $normalized: time<1ms" else "Request timed out", state)
         if (normalized == "192.168.10.1" || normalized == "10.0.0.1")
             return result("ping $normalized", "Reply from $normalized: time<1ms", state)
         return if (state.routes.any { it.prefix == "0.0.0.0/0" })
