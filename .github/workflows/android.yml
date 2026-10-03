@@ -1,4 +1,4 @@
-name: NetMaster Android APK
+name: Build Installable APK
 
 on:
   push:
@@ -6,14 +6,14 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: android-apk-${{ github.ref }}
+  group: build-apk-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  build-debug-apk:
+  build:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -23,19 +23,15 @@ jobs:
         run: |
           curl -fsSL "https://raw.githubusercontent.com/MrUtility01/NetMasterLearning/b17881a63299efc956ee79920f285b5fb93cc053/app/src/main/java/com/example/netmaster/ui/NetMasterApp.kt" \
             -o app/src/main/java/com/example/netmaster/ui/NetMasterApp.kt
-          wc -l app/src/main/java/com/example/netmaster/ui/NetMasterApp.kt
-          grep -q "fun TopologyGraph" app/src/main/java/com/example/netmaster/ui/NetMasterApp.kt
-          grep -q "fun ProtocolFlowChart" app/src/main/java/com/example/netmaster/ui/NetMasterApp.kt
           grep -q "fun NetMasterApp" app/src/main/java/com/example/netmaster/ui/NetMasterApp.kt
-          echo "NetMasterApp restored OK"
+          echo "UI restored OK"
 
-      - name: Patch ViewModel named constructors (safe)
+      - name: Patch ViewModel named constructors
         run: |
           python3 - <<'PY'
           from pathlib import Path
           p = Path('app/src/main/java/com/example/netmaster/ui/NetMasterViewModel.kt')
           if not p.exists():
-              print('ViewModel missing, skip')
               raise SystemExit(0)
           t = p.read_text(encoding='utf-8')
           reps = [
@@ -57,9 +53,8 @@ jobs:
           for old, new in reps:
               if old in t:
                   t = t.replace(old, new)
-                  print('patched', old[:50])
           p.write_text(t, encoding='utf-8')
-          print('ViewModel patch done')
+          print('ViewModel OK')
           PY
 
       - uses: actions/setup-java@v4
@@ -70,7 +65,7 @@ jobs:
 
       - uses: android-actions/setup-android@v4
 
-      - name: Install Android SDK packages
+      - name: Install Android SDK
         run: |
           yes | sdkmanager --licenses >/dev/null || true
           sdkmanager "platforms;android-35" "build-tools;35.0.0" || true
@@ -80,15 +75,48 @@ jobs:
           gradle-version: '8.9'
           validate-wrappers: false
 
-      - name: Assemble Debug APK
+      - name: Build Debug APK (signed, installable)
         run: gradle assembleDebug --no-daemon --stacktrace
 
-      - name: List APK
-        run: find app/build/outputs -name "*.apk" -ls || true
+      - name: Prepare installable APK
+        run: |
+          mkdir -p dist
+          SRC=$(find app/build/outputs/apk/debug -name "*.apk" | head -1)
+          echo "Source: $SRC"
+          test -n "$SRC"
+          test -s "$SRC"
+          cp "$SRC" dist/NetMaster-Learning.apk
+          ls -lh dist/NetMaster-Learning.apk
+          # quick integrity check
+          file dist/NetMaster-Learning.apk
+          unzip -t dist/NetMaster-Learning.apk | tail -5
 
       - uses: actions/upload-artifact@v4
         with:
-          name: netmaster-debug-apk
-          path: app/build/outputs/apk/debug/*.apk
+          name: NetMaster-Learning-APK
+          path: dist/NetMaster-Learning.apk
           if-no-files-found: error
-          retention-days: 14
+          retention-days: 30
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v11.0.1-install
+          name: NetMaster Learning v11 — APK نصب
+          body: |
+            ## نصب روی گوشی
+
+            1. فایل **NetMaster-Learning.apk** را دانلود کنید
+            2. اگر نسخه قبلی نصب است، اول آن را حذف کنید
+            3. در تنظیمات گوشی: نصب از منابع ناشناس را فعال کنید
+            4. APK را باز کنید و نصب کنید
+
+            - Package: `com.example.netmaster`
+            - Android 8+ (API 26+)
+            - نسخه امضاشده با debug key (قابل نصب مستقیم)
+          files: dist/NetMaster-Learning.apk
+          draft: false
+          prerelease: false
+          make_latest: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

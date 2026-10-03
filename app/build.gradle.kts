@@ -13,10 +13,10 @@ android {
         applicationId = "com.example.netmaster"
         minSdk = 26
         targetSdk = 35
-        versionCode = 611
-        versionName = "11.0.0"
+        versionCode = 612
+        versionName = "11.0.1"
         buildConfigField("String", "PRODUCT_NAME", "\"NetMaster Learning\"")
-        buildConfigField("String", "PRODUCT_VERSION", "\"11.0.0\"")
+        buildConfigField("String", "PRODUCT_VERSION", "\"11.0.1\"")
         buildConfigField("String", "CREATOR_NAME", "\"مهندس مسعود جوکار\"")
         buildConfigField("String", "CREATOR_PHONE", "\"09132184122\"")
     }
@@ -27,8 +27,8 @@ android {
 
     buildTypes {
         getByName("debug") {
-            applicationIdSuffix = ".debug"
-            versionNameSuffix = "-debug"
+            // بدون suffix تا نصب ساده باشد و با نسخه قبلی تداخل کمتر داشته باشد
+            isDebuggable = true
         }
         getByName("release") {
             isMinifyEnabled = false
