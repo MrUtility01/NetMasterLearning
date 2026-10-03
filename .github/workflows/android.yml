@@ -15,47 +15,15 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
 
-      - name: Restore NetMasterApp.kt (known-good RTL UI)
+      - name: Verify UI entrypoint
         run: |
-          curl -fsSL "https://raw.githubusercontent.com/MrUtility01/NetMasterLearning/b17881a63299efc956ee79920f285b5fb93cc053/app/src/main/java/com/example/netmaster/ui/NetMasterApp.kt" \
-            -o app/src/main/java/com/example/netmaster/ui/NetMasterApp.kt
+          test -f app/src/main/java/com/example/netmaster/ui/NetMasterApp.kt
           grep -q "fun NetMasterApp" app/src/main/java/com/example/netmaster/ui/NetMasterApp.kt
-          echo "UI restored OK"
-
-      - name: Patch ViewModel named constructors
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          p = Path('app/src/main/java/com/example/netmaster/ui/NetMasterViewModel.kt')
-          if not p.exists():
-              raise SystemExit(0)
-          t = p.read_text(encoding='utf-8')
-          reps = [
-            ('dao.session(StudySessionEntity(System.currentTimeMillis(),minutes))',
-             'dao.session(StudySessionEntity(startedAt=System.currentTimeMillis(),minutes=minutes))'),
-            ('dao.incidentEvent(IncidentEventEntity(i.id,"RESOLVED","Root cause: ${root.take(240)}"))',
-             'dao.incidentEvent(IncidentEventEntity(incidentId=i.id,eventType="RESOLVED",message="Root cause: ${root.take(240)}"))'),
-            ('dao.incidentEvent(IncidentEventEntity(i.id,"STATUS",status))',
-             'dao.incidentEvent(IncidentEventEntity(incidentId=i.id,eventType="STATUS",message=status))'),
-            ('dao.incidentEvent(IncidentEventEntity(id,"EVIDENCE","$type: ${value.take(240)}"))',
-             'dao.incidentEvent(IncidentEventEntity(incidentId=id,eventType="EVIDENCE",message="$type: ${value.take(240)}"))'),
-            ('dao.capture(PacketCaptureEntity(name,"TEXT",raw,rows.size,packetEngine.summary(rows)))',
-             'dao.capture(PacketCaptureEntity(name=name,format="TEXT",rawText=raw,packetCount=rows.size,protocolSummary=packetEngine.summary(rows)))'),
-            ('dao.capture(PacketCaptureEntity(name,format,raw,rows.size,packetEngine.summary(rows)))',
-             'dao.capture(PacketCaptureEntity(name=name,format=format,rawText=raw,packetCount=rows.size,protocolSummary=packetEngine.summary(rows)))'),
-            ('dao.simulatorSnapshot(SimulatorSnapshotEntity(label,SimulatorCodec.encode(state)))',
-             'dao.simulatorSnapshot(SimulatorSnapshotEntity(label=label,stateJson=SimulatorCodec.encode(state)))'),
-          ]
-          for old, new in reps:
-              if old in t:
-                  t = t.replace(old, new)
-          p.write_text(t, encoding='utf-8')
-          print('ViewModel OK')
-          PY
+          echo "NetMasterApp OK"
 
       - uses: actions/setup-java@v4
         with:
@@ -65,7 +33,7 @@ jobs:
 
       - uses: android-actions/setup-android@v4
 
-      - name: Install Android SDK
+      - name: SDK packages
         run: |
           yes | sdkmanager --licenses >/dev/null || true
           sdkmanager "platforms;android-35" "build-tools;35.0.0" || true
@@ -75,21 +43,18 @@ jobs:
           gradle-version: '8.9'
           validate-wrappers: false
 
-      - name: Build Debug APK (signed, installable)
+      - name: Assemble Debug APK
         run: gradle assembleDebug --no-daemon --stacktrace
 
-      - name: Prepare installable APK
+      - name: Package APK
         run: |
           mkdir -p dist
           SRC=$(find app/build/outputs/apk/debug -name "*.apk" | head -1)
-          echo "Source: $SRC"
-          test -n "$SRC"
-          test -s "$SRC"
+          echo "SRC=$SRC"
+          test -n "$SRC" && test -s "$SRC"
           cp "$SRC" dist/NetMaster-Learning.apk
           ls -lh dist/NetMaster-Learning.apk
-          # quick integrity check
-          file dist/NetMaster-Learning.apk
-          unzip -t dist/NetMaster-Learning.apk | tail -5
+          unzip -t dist/NetMaster-Learning.apk | tail -3
 
       - uses: actions/upload-artifact@v4
         with:
@@ -98,25 +63,17 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
-      - name: Publish GitHub Release
+      - name: GitHub Release
         uses: softprops/action-gh-release@v2
+        continue-on-error: true
         with:
-          tag_name: v11.0.1-install
-          name: NetMaster Learning v11 — APK نصب
+          tag_name: v11.0.${{ github.run_number }}
+          name: NetMaster Learning — Build ${{ github.run_number }}
           body: |
-            ## نصب روی گوشی
-
-            1. فایل **NetMaster-Learning.apk** را دانلود کنید
-            2. اگر نسخه قبلی نصب است، اول آن را حذف کنید
-            3. در تنظیمات گوشی: نصب از منابع ناشناس را فعال کنید
-            4. APK را باز کنید و نصب کنید
-
-            - Package: `com.example.netmaster`
-            - Android 8+ (API 26+)
-            - نسخه امضاشده با debug key (قابل نصب مستقیم)
+            دانلود **NetMaster-Learning.apk**
+            اگر نسخه قبلی نصب است اول حذف کنید.
+            Package: com.example.netmaster
           files: dist/NetMaster-Learning.apk
-          draft: false
-          prerelease: false
           make_latest: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
