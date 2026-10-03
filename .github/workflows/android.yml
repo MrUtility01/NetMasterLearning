@@ -80,16 +80,8 @@ jobs:
           gradle-version: '8.9'
           validate-wrappers: false
 
-      - name: Make gradlew executable
-        run: chmod +x gradlew || true
-
       - name: Assemble Debug APK
-        run: |
-          if [ -x ./gradlew ]; then
-            ./gradlew assembleDebug --no-daemon --stacktrace
-          else
-            gradle assembleDebug --no-daemon --stacktrace
-          fi
+        run: gradle assembleDebug --no-daemon --stacktrace
 
       - name: List APK
         run: find app/build/outputs -name "*.apk" -ls || true
