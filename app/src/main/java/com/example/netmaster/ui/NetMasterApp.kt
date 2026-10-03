@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -25,7 +26,6 @@ import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.netmaster.ai.*
 import com.example.netmaster.data.*
 import com.example.netmaster.domain.*
 import kotlin.math.cos
@@ -167,6 +167,29 @@ fun ProtocolFlowChart(title: String, steps: List<String>) {
 }
 
 @Composable
+fun InteractiveQuizCard(questions: List<QuizQuestion>) {
+    if (questions.isEmpty()) return
+    var index by remember { mutableIntStateOf(0) }
+    var revealed by remember { mutableStateOf(false) }
+    val q = questions[index % questions.size]
+    SectionCard("آزمون تعاملی", "سؤال ${index + 1} از ${questions.size} — ابتدا فکر کن، بعد پاسخ را ببین", Icons.Default.Quiz) {
+        BodyText(q.q)
+        if (!revealed) {
+            Button(onClick = { revealed = true }, Modifier.fillMaxWidth()) { Text("نمایش پاسخ") }
+        } else {
+            Text("پاسخ:", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+            BodyText(q.a)
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedButton({
+                    revealed = false
+                    index = (index + 1) % questions.size
+                }, Modifier.weight(1f)) { Text("سؤال بعدی") }
+            }
+        }
+    }
+}
+
+@Composable
 fun NetMasterApp(vm: NetMasterViewModel) {
     var tab by remember { mutableIntStateOf(0) }
     var selectedLesson by remember { mutableStateOf<Lesson?>(null) }
@@ -218,23 +241,17 @@ fun HomeScreen(vm: NetMasterViewModel, open: (Lesson) -> Unit) {
     val progress = vm.progress.collectAsState().value
     LazyColumn(Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         item {
-            SectionCard("NetMaster Learning", "آموزش شبکه · Lab · شبیه‌ساز · عیب‌یابی", Icons.Default.Hub) {
-                Text("از خانه درس را باز کنید؛ در آزمایشگاه توپولوژی و VLAN/تانل را ببینید.")
+            SectionCard("NetMaster Learning", "متن‌ها برای خوانایی فارسی پالایش می‌شوند · Lab واقعی در آزمایشگاه", Icons.Default.Hub) {
+                Text("درس را باز کنید. اگر متن خام تکراری باشد، نسخهٔ شفاف‌تر با مثال دقیق نمایش داده می‌شود.")
             }
         }
         if (c == null) {
             item { Text("در حال بارگذاری محتوا…", Modifier.padding(8.dp)) }
         } else {
             c.levels.forEach { level ->
-                item {
-                    Text(level.title, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
-                }
+                item { Text(level.title, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium) }
                 items(level.lessons, key = { it.id }) { lesson ->
-                    Card(
-                        onClick = { open(lesson) },
-                        shape = RoundedCornerShape(12.dp),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
+                    Card(onClick = { open(lesson) }, shape = RoundedCornerShape(12.dp), modifier = Modifier.fillMaxWidth()) {
                         Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
                             Column(Modifier.weight(1f)) {
                                 Text(lesson.title, fontWeight = FontWeight.SemiBold)
@@ -252,6 +269,7 @@ fun HomeScreen(vm: NetMasterViewModel, open: (Lesson) -> Unit) {
 
 @Composable
 fun LessonDetailScreen(vm: NetMasterViewModel, lesson: Lesson, back: () -> Unit) {
+    val e = remember(lesson.id) { LessonEnricher.enrich(lesson) }
     val progress = vm.progress.collectAsState().value[lesson.id]
     val bookmarks = vm.bookmarks.collectAsState().value
     var note by remember { mutableStateOf("") }
@@ -267,46 +285,86 @@ fun LessonDetailScreen(vm: NetMasterViewModel, lesson: Lesson, back: () -> Unit)
                     Icon(if (bookmarks.contains(lesson.id)) Icons.Default.Bookmark else Icons.Default.BookmarkBorder, "نشانک")
                 }
             }
-            Text(lesson.title, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+            Text(e.title, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+            if (e.wasEnriched) {
+                Text(
+                    "این درس از روی قالب تکراری پالایش شده تا مثال و توضیح واضح‌تر باشد.",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.secondary
+                )
+            }
         }
-        if (lesson.goal.isNotBlank()) item { SectionCard("هدف درس", icon = Icons.Default.Flag) { BodyText(lesson.goal) } }
-        if (lesson.simple.isNotBlank()) item { SectionCard("مفهوم ساده", icon = Icons.Default.LightMode) { BodyText(lesson.simple) } }
-        if (lesson.technical.isNotBlank()) item { SectionCard("مفهوم فنی", icon = Icons.Default.Memory) { BodyText(lesson.technical) } }
-        if (lesson.deepTechnical.isNotBlank()) item { SectionCard("تحلیل عمیق", icon = Icons.Default.Assessment) { BodyText(lesson.deepTechnical) } }
-        if (lesson.packetWalkthrough.isNotBlank()) item { SectionCard("گام‌به‌گام بسته", icon = Icons.Default.MoreVert) { BodyText(lesson.packetWalkthrough) } }
-        if (lesson.diagram.isNotBlank()) item { SectionCard("دیاگرام", icon = Icons.Default.Hub) { BodyText(lesson.diagram, mono = true) } }
-        if (lesson.configurationPlaybook.isNotBlank()) item { SectionCard("پلی‌بوک پیکربندی", icon = Icons.Default.Settings) { BodyText(lesson.configurationPlaybook, mono = true) } }
-        if (lesson.commands.isNotBlank() || lesson.platformCommands.isNotBlank()) {
-            item { SectionCard("دستورات", icon = Icons.Default.Terminal) { BodyText(lesson.platformCommands.ifBlank { lesson.commands }, mono = true) } }
+        if (e.goal.isNotBlank()) item { SectionCard("هدف درس", icon = Icons.Default.Flag) { BodyText(e.goal) } }
+        if (e.simple.isNotBlank()) item { SectionCard("به زبان ساده", icon = Icons.Default.LightMode) { BodyText(e.simple) } }
+        if (e.technical.isNotBlank()) item { SectionCard("توضیح فنی دقیق", icon = Icons.Default.Memory) { BodyText(e.technical) } }
+        if (e.keyPoints.isNotEmpty()) {
+            item {
+                SectionCard("نکات کلیدی", icon = Icons.Default.Star) {
+                    e.keyPoints.forEach { Text("• $it") }
+                }
+            }
         }
-        if (lesson.lab.isNotBlank()) item { SectionCard("آزمایشگاه", icon = Icons.Default.Build) { BodyText(lesson.lab) } }
-        if (lesson.troubleshooting.isNotBlank()) item { SectionCard("عیب‌یابی", icon = Icons.Default.Warning) { BodyText(lesson.troubleshooting) } }
+        if (e.labSteps.isNotEmpty()) {
+            item {
+                SectionCard("آزمایشگاه — مراحل واقعی", "گام‌به‌گام، نه متن نمایشی", Icons.Default.Build) {
+                    e.labSteps.forEachIndexed { i, s -> Text("${i + 1}. $s") }
+                }
+            }
+            item { ProtocolFlowChart("مسیر آزمایش", e.labSteps.take(6)) }
+        }
+        if (e.troubleshooting.isNotEmpty()) {
+            item {
+                SectionCard("عیب‌یابی با فرضیه و شواهد", icon = Icons.Default.Warning) {
+                    e.troubleshooting.forEach { f ->
+                        Card(shape = RoundedCornerShape(10.dp), modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
+                            Column(Modifier.padding(10.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                Text("علائم: ${f.symptom}", fontWeight = FontWeight.Bold)
+                                Text("فرضیه: ${f.hypothesis}")
+                                Text("شواهد: ${f.evidence}")
+                                Text("قدم بعد: ${f.next}", color = MaterialTheme.colorScheme.primary)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (e.commands.isNotBlank()) {
+            item {
+                SectionCard("دستورات (چپ‌به‌راست)", "Cisco / MikroTik / لینوکس — جدا از متن فارسی", Icons.Default.Terminal) {
+                    BodyText(e.commands, mono = true)
+                }
+            }
+        }
+        if (e.commonMistakes.isNotEmpty()) {
+            item {
+                SectionCard("اشتباهات رایج", icon = Icons.Default.Report) {
+                    e.commonMistakes.forEach { Text("• $it") }
+                }
+            }
+        }
+        item { InteractiveQuizCard(e.quiz) }
         item {
-            SectionCard("سطح تسلط", icon = Icons.Default.Star) {
+            SectionCard("سطح تسلط شما", icon = Icons.Default.Grade) {
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     Mastery.entries.forEach { m ->
-                        FilterChip(selected = progress?.mastery == m.name, onClick = { vm.setMastery(lesson.id, m) }, label = { Text(masteryFa(m.name), fontSize = 12.sp) })
+                        FilterChip(
+                            selected = progress?.mastery == m.name,
+                            onClick = { vm.setMastery(lesson.id, m) },
+                            label = { Text(masteryFa(m.name), fontSize = 12.sp) }
+                        )
                     }
                 }
             }
         }
         item {
-            SectionCard("یادداشت", icon = Icons.Default.EditNote) {
-                OutlinedTextField(note, { note = it }, Modifier.fillMaxWidth(), minLines = 3, label = { Text("یادداشت") })
+            SectionCard("یادداشت شخصی", icon = Icons.Default.EditNote) {
+                OutlinedTextField(note, { note = it }, Modifier.fillMaxWidth(), minLines = 3, label = { Text("یادداشت به فارسی") })
                 Button({
-                    if (note.isNotBlank()) { vm.addNote(lesson.id, lesson.title, note); note = "" }
-                }, Modifier.fillMaxWidth()) { Text("ذخیره") }
-            }
-        }
-        if (lesson.quiz.isNotEmpty()) {
-            item { Text("سؤالات", fontWeight = FontWeight.Bold) }
-            items(lesson.quiz) { q ->
-                Card(shape = RoundedCornerShape(12.dp)) {
-                    Column(Modifier.padding(12.dp)) {
-                        BodyText(q.q)
-                        Text("پاسخ: ${q.a}", color = MaterialTheme.colorScheme.secondary)
+                    if (note.isNotBlank()) {
+                        vm.addNote(lesson.id, e.title, note)
+                        note = ""
                     }
-                }
+                }, Modifier.fillMaxWidth()) { Text("ذخیره") }
             }
         }
     }
