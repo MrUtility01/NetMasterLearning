@@ -40,16 +40,6 @@ private fun masteryFa(v: String) = when (v) {
     else -> v
 }
 
-private fun modeFa(m: AiMode) = when (m) {
-    AiMode.TEACHER -> "معلم"
-    AiMode.SOCRATIC -> "سقراطی"
-    AiMode.TROUBLESHOOTER -> "عیب‌یابی"
-    AiMode.EXAMINER -> "آزمون‌گر"
-    AiMode.LAB_COACH -> "مربی آزمایشگاه"
-    AiMode.CONFIG_REVIEWER -> "بازبین پیکربندی"
-    AiMode.AUTONOMOUS_COACH -> "مربی خودکار"
-}
-
 @Composable
 fun SectionCard(
     title: String,
@@ -63,46 +53,19 @@ fun SectionCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
-        Column(
-            Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 if (icon != null) {
-                    Surface(
-                        shape = CircleShape,
-                        color = MaterialTheme.colorScheme.primaryContainer,
-                        modifier = Modifier.size(36.dp)
-                    ) {
+                    Surface(shape = CircleShape, color = MaterialTheme.colorScheme.primaryContainer, modifier = Modifier.size(36.dp)) {
                         Box(contentAlignment = Alignment.Center) {
-                            Icon(
-                                icon,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(20.dp)
-                            )
+                            Icon(icon, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
                         }
                     }
                 }
                 Column(Modifier.weight(1f)) {
-                    Text(
-                        title,
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary,
-                        textAlign = TextAlign.Start
-                    )
+                    Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
                     if (!subtitle.isNullOrBlank()) {
-                        Text(
-                            subtitle,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis
-                        )
+                        Text(subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 2, overflow = TextOverflow.Ellipsis)
                     }
                 }
             }
@@ -124,66 +87,27 @@ fun BodyText(text: String, mono: Boolean = false) {
 }
 
 @Composable
-fun TopologyGraph(
-    nodes: List<TwinNode>,
-    links: List<TwinLink>,
-    modifier: Modifier = Modifier
-) {
+fun TopologyGraph(nodes: List<TwinNode>, links: List<TwinLink>, modifier: Modifier = Modifier) {
     val primary = MaterialTheme.colorScheme.primary
     val outline = MaterialTheme.colorScheme.outline
     val surfaceVar = MaterialTheme.colorScheme.surfaceVariant
     val onSurface = MaterialTheme.colorScheme.onSurface
-
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(18.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ) {
+    Card(modifier = modifier.fillMaxWidth(), shape = RoundedCornerShape(18.dp), elevation = CardDefaults.cardElevation(2.dp)) {
         Column(Modifier.padding(14.dp)) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Icon(Icons.Default.Hub, null, tint = primary, modifier = Modifier.size(22.dp))
                 Column {
-                    Text(
-                        "توپولوژی شبکه",
-                        fontWeight = FontWeight.Bold,
-                        color = primary,
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Text(
-                        "نودها و لینک‌های دوقلوی دیجیتال",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                    Text("توپولوژی شبکه", fontWeight = FontWeight.Bold, color = primary, style = MaterialTheme.typography.titleMedium)
+                    Text("${nodes.size} دیوایس · ${links.size} لینک", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
             Spacer(Modifier.height(10.dp))
-
             if (nodes.isEmpty()) {
-                Box(
-                    Modifier
-                        .fillMaxWidth()
-                        .height(160.dp)
-                        .background(surfaceVar, RoundedCornerShape(14.dp)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        "توپولوژی خالی است — از آزمایشگاه بارگذاری کنید",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(16.dp)
-                    )
+                Box(Modifier.fillMaxWidth().height(160.dp).background(surfaceVar, RoundedCornerShape(14.dp)), contentAlignment = Alignment.Center) {
+                    Text("توپولوژی خالی — از آزمایشگاه بارگذاری کنید", color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center, modifier = Modifier.padding(16.dp))
                 }
             } else {
-                Canvas(
-                    Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                        .background(surfaceVar, RoundedCornerShape(14.dp))
-                ) {
+                Canvas(Modifier.fillMaxWidth().height(200.dp).background(surfaceVar, RoundedCornerShape(14.dp))) {
                     val cx = size.width / 2f
                     val cy = size.height / 2f
                     val r = min(size.width, size.height) * 0.32f
@@ -193,14 +117,11 @@ fun TopologyGraph(
                         node.id to Offset(cx + r * cos(a).toFloat(), cy + r * sin(a).toFloat())
                     }.toMap()
                     links.forEach { link ->
-                        val a = pos[link.from]
-                        val b = pos[link.to]
+                        val a = pos[link.from]; val b = pos[link.to]
                         if (a != null && b != null) {
                             drawLine(
                                 color = if (link.up) outline else outline.copy(alpha = 0.4f),
-                                start = a,
-                                end = b,
-                                strokeWidth = 3f,
+                                start = a, end = b, strokeWidth = 3f,
                                 pathEffect = if (link.up) null else PathEffect.dashPathEffect(floatArrayOf(10f, 8f))
                             )
                         }
@@ -211,21 +132,7 @@ fun TopologyGraph(
                         drawCircle(Color.White, 24f, p, style = Stroke(width = 2.5f))
                     }
                 }
-                Text(
-                    nodes.joinToString("  •  ") { it.name.take(14) },
-                    style = MaterialTheme.typography.labelMedium,
-                    color = onSurface,
-                    modifier = Modifier.padding(top = 8.dp),
-                    maxLines = 3,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Row(
-                    Modifier.padding(top = 6.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    Text("● نود فعال", color = primary, style = MaterialTheme.typography.labelSmall)
-                    Text("┄ لینک قطع", color = outline, style = MaterialTheme.typography.labelSmall)
-                }
+                Text(nodes.joinToString("  •  ") { it.name.take(14) }, style = MaterialTheme.typography.labelMedium, color = onSurface, modifier = Modifier.padding(top = 8.dp), maxLines = 3, overflow = TextOverflow.Ellipsis)
             }
         }
     }
@@ -235,82 +142,169 @@ fun TopologyGraph(
 fun ProtocolFlowChart(title: String, steps: List<String>) {
     val primary = MaterialTheme.colorScheme.primary
     val container = MaterialTheme.colorScheme.primaryContainer
-
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(18.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ) {
-        Column(
-            Modifier.padding(14.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Icon(Icons.Default.Hub, null, tint = primary, modifier = Modifier.size(22.dp))
-                Column {
-                    Text(
-                        title,
-                        fontWeight = FontWeight.Bold,
-                        color = primary,
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Text(
-                        "مسیر پردازش پروتکل و لایه‌ها",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
-
+    Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(18.dp), elevation = CardDefaults.cardElevation(2.dp)) {
+        Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(title, fontWeight = FontWeight.Bold, color = primary, style = MaterialTheme.typography.titleMedium)
             steps.forEachIndexed { index, step ->
-                Row(
-                    Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    Surface(
-                        shape = CircleShape,
-                        color = primary,
-                        modifier = Modifier.size(28.dp)
-                    ) {
+                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    Surface(shape = CircleShape, color = primary, modifier = Modifier.size(28.dp)) {
                         Box(contentAlignment = Alignment.Center) {
-                            Text(
-                                "${index + 1}",
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 13.sp
-                            )
+                            Text("${index + 1}", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 13.sp)
                         }
                     }
-                    Surface(
-                        shape = RoundedCornerShape(12.dp),
-                        color = container,
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text(
-                            step,
-                            Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
-                            fontWeight = FontWeight.Medium,
-                            style = MaterialTheme.typography.bodyMedium
-                        )
+                    Surface(shape = RoundedCornerShape(12.dp), color = container, modifier = Modifier.weight(1f)) {
+                        Text(step, Modifier.padding(horizontal = 14.dp, vertical = 10.dp), fontWeight = FontWeight.Medium)
                     }
                 }
                 if (index < steps.lastIndex) {
-                    Box(
-                        Modifier
-                            .padding(start = 10.dp)
-                            .size(28.dp),
-                        contentAlignment = Alignment.Center
+                    Box(Modifier.padding(start = 10.dp).size(28.dp), contentAlignment = Alignment.Center) {
+                        Text("↓", color = primary, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun NetMasterApp(vm: NetMasterViewModel) {
+    var tab by remember { mutableIntStateOf(0) }
+    var selectedLesson by remember { mutableStateOf<Lesson?>(null) }
+    val tabs = listOf(
+        "خانه" to Icons.Default.Home,
+        "آزمایشگاه" to Icons.Default.Science,
+        "شبیه‌ساز" to Icons.Default.Terminal,
+        "آزمون" to Icons.Default.Quiz,
+        "AI" to Icons.Default.SmartToy,
+        "عملیات" to Icons.Default.MonitorHeart,
+        "جستجو" to Icons.Default.Search,
+        "یادداشت" to Icons.Default.Notes,
+        "V11" to Icons.Default.Engineering
+    )
+    Scaffold(
+        bottomBar = {
+            NavigationBar {
+                tabs.forEachIndexed { i, (label, icon) ->
+                    NavigationBarItem(
+                        selected = tab == i && selectedLesson == null,
+                        onClick = { tab = i; selectedLesson = null },
+                        icon = { Icon(icon, contentDescription = label) },
+                        label = { Text(label, fontSize = 10.sp, maxLines = 1) }
+                    )
+                }
+            }
+        }
+    ) { pad ->
+        Box(Modifier.fillMaxSize().padding(pad)) {
+            when {
+                selectedLesson != null -> LessonDetailScreen(vm, selectedLesson!!) { selectedLesson = null }
+                tab == 0 -> HomeScreen(vm) { selectedLesson = it }
+                tab == 1 -> LabScreen(vm)
+                tab == 2 -> SimScreen(vm)
+                tab == 3 -> QuizScreen(vm) { selectedLesson = it }
+                tab == 4 -> AiScreen(vm)
+                tab == 5 -> OpsScreen(vm)
+                tab == 6 -> SearchScreen(vm) { selectedLesson = it }
+                tab == 7 -> NotesScreen(vm)
+                tab == 8 -> V11Screen(vm)
+            }
+        }
+    }
+}
+
+@Composable
+fun HomeScreen(vm: NetMasterViewModel, open: (Lesson) -> Unit) {
+    val c = vm.curriculum.collectAsState().value
+    val progress = vm.progress.collectAsState().value
+    LazyColumn(Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        item {
+            SectionCard("NetMaster Learning", "آموزش شبکه · Lab · شبیه‌ساز · عیب‌یابی", Icons.Default.Hub) {
+                Text("از خانه درس را باز کنید؛ در آزمایشگاه توپولوژی و VLAN/تانل را ببینید.")
+            }
+        }
+        if (c == null) {
+            item { Text("در حال بارگذاری محتوا…", Modifier.padding(8.dp)) }
+        } else {
+            c.levels.forEach { level ->
+                item {
+                    Text(level.title, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+                }
+                items(level.lessons, key = { it.id }) { lesson ->
+                    Card(
+                        onClick = { open(lesson) },
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text(
-                            "↓",
-                            color = primary,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp
-                        )
+                        Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                            Column(Modifier.weight(1f)) {
+                                Text(lesson.title, fontWeight = FontWeight.SemiBold)
+                                val m = progress[lesson.id]?.mastery
+                                if (m != null) Text(masteryFa(m), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
+                            }
+                            Icon(Icons.Default.ChevronLeft, null)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun LessonDetailScreen(vm: NetMasterViewModel, lesson: Lesson, back: () -> Unit) {
+    val progress = vm.progress.collectAsState().value[lesson.id]
+    val bookmarks = vm.bookmarks.collectAsState().value
+    var note by remember { mutableStateOf("") }
+    LazyColumn(Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        item {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                TextButton(onClick = back) {
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, null)
+                    Spacer(Modifier.width(4.dp))
+                    Text("بازگشت")
+                }
+                IconButton(onClick = { vm.toggleBookmark(lesson.id) }) {
+                    Icon(if (bookmarks.contains(lesson.id)) Icons.Default.Bookmark else Icons.Default.BookmarkBorder, "نشانک")
+                }
+            }
+            Text(lesson.title, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+        }
+        if (lesson.goal.isNotBlank()) item { SectionCard("هدف درس", icon = Icons.Default.Flag) { BodyText(lesson.goal) } }
+        if (lesson.simple.isNotBlank()) item { SectionCard("مفهوم ساده", icon = Icons.Default.LightMode) { BodyText(lesson.simple) } }
+        if (lesson.technical.isNotBlank()) item { SectionCard("مفهوم فنی", icon = Icons.Default.Memory) { BodyText(lesson.technical) } }
+        if (lesson.deepTechnical.isNotBlank()) item { SectionCard("تحلیل عمیق", icon = Icons.Default.Assessment) { BodyText(lesson.deepTechnical) } }
+        if (lesson.packetWalkthrough.isNotBlank()) item { SectionCard("گام‌به‌گام بسته", icon = Icons.Default.MoreVert) { BodyText(lesson.packetWalkthrough) } }
+        if (lesson.diagram.isNotBlank()) item { SectionCard("دیاگرام", icon = Icons.Default.Hub) { BodyText(lesson.diagram, mono = true) } }
+        if (lesson.configurationPlaybook.isNotBlank()) item { SectionCard("پلی‌بوک پیکربندی", icon = Icons.Default.Settings) { BodyText(lesson.configurationPlaybook, mono = true) } }
+        if (lesson.commands.isNotBlank() || lesson.platformCommands.isNotBlank()) {
+            item { SectionCard("دستورات", icon = Icons.Default.Terminal) { BodyText(lesson.platformCommands.ifBlank { lesson.commands }, mono = true) } }
+        }
+        if (lesson.lab.isNotBlank()) item { SectionCard("آزمایشگاه", icon = Icons.Default.Build) { BodyText(lesson.lab) } }
+        if (lesson.troubleshooting.isNotBlank()) item { SectionCard("عیب‌یابی", icon = Icons.Default.Warning) { BodyText(lesson.troubleshooting) } }
+        item {
+            SectionCard("سطح تسلط", icon = Icons.Default.Star) {
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Mastery.entries.forEach { m ->
+                        FilterChip(selected = progress?.mastery == m.name, onClick = { vm.setMastery(lesson.id, m) }, label = { Text(masteryFa(m.name), fontSize = 12.sp) })
+                    }
+                }
+            }
+        }
+        item {
+            SectionCard("یادداشت", icon = Icons.Default.EditNote) {
+                OutlinedTextField(note, { note = it }, Modifier.fillMaxWidth(), minLines = 3, label = { Text("یادداشت") })
+                Button({
+                    if (note.isNotBlank()) { vm.addNote(lesson.id, lesson.title, note); note = "" }
+                }, Modifier.fillMaxWidth()) { Text("ذخیره") }
+            }
+        }
+        if (lesson.quiz.isNotEmpty()) {
+            item { Text("سؤالات", fontWeight = FontWeight.Bold) }
+            items(lesson.quiz) { q ->
+                Card(shape = RoundedCornerShape(12.dp)) {
+                    Column(Modifier.padding(12.dp)) {
+                        BodyText(q.q)
+                        Text("پاسخ: ${q.a}", color = MaterialTheme.colorScheme.secondary)
                     }
                 }
             }
